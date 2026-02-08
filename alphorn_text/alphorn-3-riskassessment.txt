@@ -1,0 +1,7 @@
+1.The risk manager fetches the credit rating for the contract from the rating agency.
+
+2.The risk manager votes on the contract based on the monthly installment and the credit rating.
+
+3.The risk manager passes the voted contract on to the sales person.
+
+4.The sales person signs the voted contract.

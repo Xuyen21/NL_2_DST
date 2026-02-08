@@ -1,0 +1,55 @@
+@startuml
+!include <domainstory/Domainstory>
+!include <material/common>
+!include <material/car>
+
+!unquoted procedure Car($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_car", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/view_list>
+
+!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/currency_eur>
+!unquoted procedure Euro($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_currency_eur", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/security>
+
+!unquoted procedure Risk($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include C:\code\NL_2_DST\icons\report.puml
+!include C:\code\NL_2_DST\icons\vote.puml
+
+
+Report(report, credit rating report \n(PDF))
+
+Person(salesperson, sales person)
+Person(riskmanager, risk manager)
+System(rating_agency_website, rating agency website)
+System(risk_management_system, risk management system)
+
+Document(credit_rating_form, credit rating form)
+Document(contract, $label=contract)
+
+Risk(risk_assessment, risk assessment, $note="needs to be present in the system,\nbecause only then the voting result \ncan be entered")
+Risk(risk_assessment4, risk assessement)
+
+activity(1, riskmanager, fills out, credit_rating_form, with information from, contract)
+activity(,contract,on,rating_agency_website)
+activity(2,rating_agency_website,generates,report,for, riskmanager)
+activity(3, riskmanager, creates, risk_assessment, for, Document: contract)
+activity(,risk_assessment,with, Report: credit rating report \n(PDF))
+activity(,risk_assessment,in, risk_management_system)
+activity(4, riskmanager, decides on, Vote: voting result, for, risk_assessment4)
+activity(,risk_assessment4, in, risk_management_system)
+activity(5, riskmanager, passes on, Document: voted contract,to, salesperson)
+activity(_,salesperson, signs, Document:voted contract)
+
+@enduml

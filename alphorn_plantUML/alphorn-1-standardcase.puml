@@ -1,0 +1,65 @@
+@startuml
+!include <domainstory/Domainstory>
+!include <material/common>
+!include <material/car>
+
+!unquoted procedure Car($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_car", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/view_list>
+
+!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/currency_eur>
+!unquoted procedure Euro($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_currency_eur", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/security>
+
+!unquoted procedure Risk($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include ../icons/vote.puml
+
+Vote(vote, voting result)
+
+Person(customer, customer)
+Person(salesperson, sales person)
+Person(riskmanager, risk manager)
+
+Car(catalog_car, car)
+Car(car_offered, car)
+Car(car_handed_over, car)
+Car(car_returned, car)
+
+Euro(monthly_installment, monthly installment)
+Euro(regularly_payment, monthly_installment)
+Risk(risk, risk)
+
+Conversation(conversation, $label=offer)
+
+Document(contract, $label=contract)
+
+
+activity(_, customer, chooses, catalog_car)
+activity(., catalog_car, from, Catalog: catalog)
+activity(_, customer, asks for, conversation, the, salesperson)
+activity(_, salesperson, offers, contract)
+activity(., contract, for, car_offered)
+activity(.,car_offered, with, monthly_installment, to, customer)
+activity(_, customer, signs, Document:contract, salesperson)
+activity(_, salesperson, passes on, Document: contract, to,riskmanager)
+activity(_, riskmanager, assesses, risk, for, Document: contract)
+activity(_, riskmanager, votes, Document:contract)
+activity(_, riskmanager, informs about, vote, salesperson)
+activity(_, salesperson, hands over, car_handed_over , customer)
+activity(_,customer, pays regularly, regularly_payment)
+activity(_,customer, returns, car_returned, after leasing period, salesperson)
+
+
+@enduml

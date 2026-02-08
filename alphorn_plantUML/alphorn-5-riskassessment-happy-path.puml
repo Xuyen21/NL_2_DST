@@ -1,0 +1,59 @@
+@startuml
+!include <domainstory/Domainstory>
+!include <material/common>
+!include <material/car>
+
+!unquoted procedure Car($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_car", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/view_list>
+
+!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/currency_eur>
+!unquoted procedure Euro($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_currency_eur", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/security>
+
+!unquoted procedure Risk($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include C:\code\NL_2_DST\icons\report.puml
+!include C:\code\NL_2_DST\icons\vote.puml
+
+Vote(vote, voting result)
+
+Report(credit_rating, credit rating)
+Report(credit_rating2, credit rating)
+Report(credit_rating_report, credit rating report \n(PDF))
+Report(credit_rating_report2, credit rating report \n(PDF))
+
+Person(risk_manager, risk manager)
+System(online_leasing_service, online leasing service)
+System(rating_agency_website, rating agency website)
+System(risk_management_system, risk management system)
+
+
+Document(contract, $label=contract)
+Document(contract2, $label=contract)
+Document(contract3, $label=voted contract)
+Risk(risk_assessment, risk assessment)
+Risk(risk_assessment2, risk assessment)
+
+activity(1, online_leasing_service, fetches, credit_rating, for, contract)
+activity(, contract, from, rating_agency_website)
+activity(2,rating_agency_website, generates, credit_rating_report,for, online_leasing_service)
+activity(3, online_leasing_service, creates, risk_assessment, for, contract2)
+activity(,risk_assessment, and from, credit_rating_report2)
+activity(,risk_assessment, in, risk_management_system)
+activity(4, online_leasing_service, notifies about, credit_rating2, risk_manager)
+activity(5, risk_manager, decides on, vote,for,risk_assessment2)
+activity(,risk_assessment2, in, risk_management_system)
+activity(6, risk_manager, signs, contract3, in, online_leasing_service)
+@enduml

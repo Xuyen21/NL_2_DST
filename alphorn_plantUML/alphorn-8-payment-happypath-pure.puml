@@ -1,0 +1,68 @@
+@startuml
+!include <domainstory/Domainstory>
+!include <material/common>
+!include <material/car>
+
+!unquoted procedure Car($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_car", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/view_list>
+
+!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/currency_eur>
+!unquoted procedure Euro($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_currency_eur", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/security>
+
+!unquoted procedure Risk($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+!include <material/numeric>
+
+!unquoted procedure ContractNumber($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_numeric", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+
+!include ../icons/report.puml
+!include ../icons/bank.puml
+
+'!include <material/account>
+'
+'!unquoted procedure Bank($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+'    Object("$id", "$ma_account", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+'!endprocedure
+
+Report(interest, interest)
+
+Person(customer, customer)
+Person(salesperson, sales person)
+
+ContractNumber(contract_number, contract number)
+Car(car1, car)
+
+Euro(price, price)
+Euro(price2, price)
+Euro(monthly_installment, monthly installment)
+Euro(monthly_installment2, monthly installment)
+
+Bank(bank, bank)
+
+Document(contract, $label=contract)
+Document(contract2, $label=contract)
+Document(contract3, $label=contract)
+Document(contract4, $label=contract)
+Document(contract5, $label=contract)
+Document(term, term)
+Document(different_term, term)
+
+activity(1,customer, pays, monthly_installment, into, Bank:bank)
+
+@enduml

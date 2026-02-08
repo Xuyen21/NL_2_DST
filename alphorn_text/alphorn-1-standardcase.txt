@@ -1,0 +1,21 @@
+1.The customer chooses a specific car from the catalog.
+
+2.The customer initiates a conversation to ask the salesperson for assistance.
+
+3.The salesperson offers a contract to the customer, which specifies the offered car and the required monthly installments.
+
+4.The customer signs the contract document in the presence of the salesperson.
+
+5.The salesperson passes the signed contract document on to the risk manager.
+
+6.The risk manager assesses the financial risk associated with the contract.
+
+7.The risk manager votes whether to approve the contract.
+
+8.The risk manager informs the salesperson of the voting result.
+
+9.The salesperson hands over the car to the customer.
+
+10.The customer makes regular payments for the duration of the agreement.
+
+11.After the leasing period ends, the customer returns the car to the salesperson.

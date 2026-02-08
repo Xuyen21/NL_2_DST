@@ -1,0 +1,11 @@
+1.The risk manager fills out the credit rating form with information from the contract on the rating agency website.
+
+2.The rating agency website generates a credit rating report and provides it to the risk manager.
+
+3.The risk manager creates a risk assessment for the contract based on the credit rating report and stores the risk assessment in the risk management system.
+
+4.The risk manager decides on a voting result for the risk assessment, and the decision is stored in the risk management system.
+
+5.The risk manager passes the voted contract on to the sales person.
+
+6.The sales person signs the voted contract.
