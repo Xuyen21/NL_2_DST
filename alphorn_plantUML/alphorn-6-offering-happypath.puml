@@ -7,49 +7,55 @@
     Object("$id", "$ma_car", $name, $label, $tag, $note, $shape, $scale, $color, $background)
 !endprocedure
 
-!include <material/view_list>
-
-!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
-    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
-!endprocedure
-
+'!include <material/view_list>
+'
+'!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+'    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+'!endprocedure
+'
 !include <material/currency_eur>
 !unquoted procedure Euro($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
     Object("$id", "$ma_currency_eur", $name, $label, $tag, $note, $shape, $scale, $color, $background)
 !endprocedure
 
-!include <material/security>
-
-!unquoted procedure Risk($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
-    Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
-!endprocedure
-
+'!include <material/security>
+'
+'!unquoted procedure Risk($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+'    Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+'!endprocedure
+'
 !include <material/numeric>
 
 !unquoted procedure ContractNumber($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
     Object("$id", "$ma_numeric", $name, $label, $tag, $note, $shape, $scale, $color, $background)
 !endprocedure
 
-!include ../icons/report.puml
+ !include <material/view_list>
+!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
+    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
 
-
-Report(interest, interest)
-
-Person(customer, customer)
-Person(salesperson, sales person)
-
+Person(customer, customer, $color="DarkGreen", $scale=1.5)
+Person(salesperson, sales person, $color="DarkGreen", $scale=1.5)
+'
+'Report(interest, interest)
+'
+'
+'
 ContractNumber(contract_number, contract number)
 Car(car1, car)
-
 Euro(price, price)
 Euro(price2, price)
 Euro(monthly_installment, monthly installment)
+
 
 Document(contract, $label=contract)
 Document(contract2, $label=contract)
 Document(contract3, $label=contract)
 Document(contract4, $label=contract)
 Document(term, term)
+
+Catalog(interest, interest)
 
 activity(1, salesperson, fills out, contract, with, contract_number)
 activity(,contract, and, car1)
@@ -62,5 +68,6 @@ activity(,contract2, and,term)
 
 activity(3, salesperson, offers, contract3, to, customer)
 activity(4,customer, signs,contract4, and returns it to, salesperson)
+
 
 @enduml

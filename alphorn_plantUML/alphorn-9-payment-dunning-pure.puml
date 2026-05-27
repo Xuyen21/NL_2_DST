@@ -17,28 +17,28 @@ sprite mdiBank <svg width="48" height="48"><g transform="scale(2)"><path d="M11.
   Object("$id", "$mdiBank", $name, $label, $tag, $note, $shape, $scale, $color, $background)
 !endprocedure
 
-!include <material/view_list>
-!unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
-    Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+sprite mdiAlertCircle <svg width="48" height="48"><g transform="scale(2)"><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"  /></g></svg>
+!unquoted procedure Alert($name, $label="", $tag="", $note="", $shape=$Object_Shape, $scale=$Object_IconScale, $color=$Object_IconColor, $background="")
+  Object("$id", "$mdiAlertCircle", $name, $label)
 !endprocedure
 
-Person(customer, customer, $color="DarkGreen", $scale=1.5)
+Person(customer, customer, $color="DarkGreen", $scale=1.5, $note="has not paid monthly installment")
 Person(accountant, accountant, $color="DarkGreen", $scale=1.5)
+Person(risk_manager, risk_manager, $color="DarkGreen", $scale=1.5)
 
-Euro(monthly_installment, monthly installment)
-Euro(monthly_installment2, monthly installment)
-Euro(monthly_installment3, monthly installment)
+Document(dunning_letter, dunning letter)
+Euro(monthly_installment, monthly installment,  $note="does not find it")
+
 BankAccount(bank_account, bank account)
-BankAccount(bank_account2, bank account)
 Bank(bank, bank)
 
-Catalog(accounting_books, accounting books)
 
+Alert(unpaid_installment, unpaid installment)
 
-activity(1,customer, pays, monthly_installment, into, bank_account)
-activity(,bank_account, at, bank)
-activity(2, accountant, searches, monthly_installment2, in, bank_account2)
-activity(, bank_account2, at, bank)
-activity(3, accountant, books, monthly_installment3, into, accounting_books)
+activity(1,customer, searches, monthly_installment, in, bank_account)
+activity(, bank_account, at, bank)
+activity(2, accountant, informs about, unpaid_installment, the, risk_manager)
+activity(3, accountant, sends, dunning_letter, to, customer)
 
 @enduml

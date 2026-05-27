@@ -8,9 +8,13 @@
 !endprocedure
 
 !include <material/view_list>
-
 !unquoted procedure Catalog($name, $label = "", $tag = "", $note = "", $shape = $Actor_Shape, $scale = $Actor_IconScale, $color = $Actor_IconColor, $background = "")
     Object("$id", "$ma_view_list", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+!endprocedure
+
+sprite mdiVoteOutline <svg width="48" height="48"><g transform="scale(2)"><path d="M18,13L21,16V20C21,21.11 20.1,22 19,22H5C3.89,22 3,21.1 3,20V16L6,13H6.83L8.83,15H6.78L5,17H19L17.23,15H15.32L17.32,13H18M19,20V19H5V20H19M11.34,15L6.39,10.07C6,9.68 6,9.05 6.39,8.66L12.76,2.29C13.15,1.9 13.78,1.9 14.16,2.3L19.11,7.25C19.5,7.64 19.5,8.27 19.11,8.66L12.75,15C12.36,15.41 11.73,15.41 11.34,15M13.46,4.41L8.5,9.36L12.05,12.9L17,7.95L13.46,4.41Z" /></g></svg>
+!unquoted procedure Vote($name, $label="", $tag="", $note="", $shape=$Object_Shape, $scale=$Object_IconScale, $color=$Object_IconColor, $background="")
+  Object("$id", "$mdiVoteOutline", $name, $label, $tag, $note, $shape, $scale, $color, $background)
 !endprocedure
 
 !include <material/currency_eur>
@@ -24,18 +28,23 @@
     Object("$id", "$ma_security", $name, $label, $tag, $note, $shape, $scale, $color, $background)
 !endprocedure
 
-!include ../icons/vote.puml
+sprite mdiVoteOutline <svg width="48" height="48"><g transform="scale(2)"><path d="M18,13L21,16V20C21,21.11 20.1,22 19,22H5C3.89,22 3,21.1 3,20V16L6,13H6.83L8.83,15H6.78L5,17H19L17.23,15H15.32L17.32,13H18M19,20V19H5V20H19M11.34,15L6.39,10.07C6,9.68 6,9.05 6.39,8.66L12.76,2.29C13.15,1.9 13.78,1.9 14.16,2.3L19.11,7.25C19.5,7.64 19.5,8.27 19.11,8.66L12.75,15C12.36,15.41 11.73,15.41 11.34,15M13.46,4.41L8.5,9.36L12.05,12.9L17,7.95L13.46,4.41Z" /></g></svg>
+!unquoted procedure Vote($name, $label="", $tag="", $note="", $shape=$Object_Shape, $scale=$Object_IconScale, $color=$Object_IconColor, $background="")
+  Object("$id", "$mdiVoteOutline", $name, $label)
+!endprocedure
+
 
 Vote(vote, voting result)
 
-Person(customer, customer)
-Person(salesperson, sales person)
-Person(riskmanager, risk manager)
+Person(customer, customer, $color="DarkGreen", $scale=1.5)
+Person(salesperson, sales person, $color="DarkGreen", $scale=1.5)
+Person(riskmanager, risk manager, $color="DarkGreen", $scale=1.5)
 
 Car(catalog_car, car)
-Car(car_offered, car)
+'Car(car_offered, car)
 Car(car_handed_over, car)
 Car(car_returned, car)
+Car(car_3, car)
 
 Euro(monthly_installment, monthly installment)
 Euro(regularly_payment, monthly_installment)
@@ -46,20 +55,19 @@ Conversation(conversation, $label=offer)
 Document(contract, $label=contract)
 
 
-activity(_, customer, chooses, catalog_car)
-activity(., catalog_car, from, Catalog: catalog)
-activity(_, customer, asks for, conversation, the, salesperson)
-activity(_, salesperson, offers, contract)
-activity(., contract, for, car_offered)
-activity(.,car_offered, with, monthly_installment, to, customer)
-activity(_, customer, signs, Document:contract, salesperson)
-activity(_, salesperson, passes on, Document: contract, to,riskmanager)
-activity(_, riskmanager, assesses, risk, for, Document: contract)
-activity(_, riskmanager, votes, Document:contract)
-activity(_, riskmanager, informs about, vote, salesperson)
-activity(_, salesperson, hands over, car_handed_over , customer)
-activity(_,customer, pays regularly, regularly_payment)
-activity(_,customer, returns, car_returned, after leasing period, salesperson)
+activity(1, customer, chooses, catalog_car, from, Catalog: catalog)
+'activity(, catalog_car, from, Catalog: catalog)
+activity(2, customer, asks for, conversation, the, salesperson)
+activity(3, salesperson, offers, contract, for, car_3)
+activity(,car_3, with, monthly_installment, to, customer)
+activity(4, customer, signs, Document:contract, salesperson)
+activity(5, salesperson, passes, Document: contract, on to, riskmanager)
+activity(6, riskmanager, calculates, risk, for, Document: contract)
+activity(7, riskmanager, votes, Document:contract)
+activity(8, riskmanager, informs about, vote, salesperson)
+activity(9, salesperson, hands over, car_handed_over , customer)
+activity(10,customer, pays regularly, regularly_payment)
+activity(11,customer, returns, car_returned, after leasing period, salesperson)
 
 
 @enduml
