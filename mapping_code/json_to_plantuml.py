@@ -52,8 +52,19 @@ def init_work_objects(work_obj_instances: list[object]):
         work_obj_instance_list.append(init_work_obj)
     return work_obj_instance_list
 
-def init_activities():
-    pass
+
+def init_activities(steps: list[object]):
+    activities_list = []
+    for step in steps:
+        for index, line in enumerate(step['lines']):
+            # within the same step, only assign step number for the first activities. For substep, use empty string
+            order = f'activity({step['step']}' if index == 0 else f'activity( '
+            # preposition and target_id can be null
+            preposition = f', {line['preposition']}' if line['preposition'] is not None else ''
+            target_id = f', {line['target_id']}' if line['target_id'] is not None else ''
+            action = f"{order}, {line['subject_id']}, {line['action']}, {line['object_id']} {preposition} {target_id})"
+            activities_list.append(action)
+    return activities_list
 
 
 def create_plantuml_syntax(story_json):
@@ -71,6 +82,10 @@ def create_plantuml_syntax(story_json):
     # work object instances
     work_obj_instance_list = init_work_objects(story_json["work_object_instances"])
     INIT_LINE.extend(work_obj_instance_list)
+
+    # activities
+    activities_list = init_activities(story_json["steps"])
+    INIT_LINE.extend(activities_list)
 
     INIT_LINE.append("@enduml")
     return "\n".join(INIT_LINE)
