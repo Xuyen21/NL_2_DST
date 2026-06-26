@@ -69,5 +69,4 @@ activity(9, salesperson, hands over, car_handed_over , customer)
 activity(10,customer, pays regularly, regularly_payment)
 activity(11,customer, returns, car_returned, after leasing period, salesperson)
 
-
 @enduml

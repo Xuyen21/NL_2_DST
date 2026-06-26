@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/testcase2/README.md">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/testcase2/README.md" />
+              <option name="originalContent" value="# Promptfoo prompt evaluation&#10;&#10;## Quick start&#10;&#10;1. Set your API key (if using a cloud provider):&#10;&#10;```bash&#10;export OPENAI_API_KEY=sk-...&#10;# Or for other providers:&#10;# export ANTHROPIC_API_KEY=sk-ant-...&#10;# export GOOGLE_API_KEY=...&#10;```&#10;&#10;2. Edit `promptfooconfig.yaml` to customize prompts, providers, and test cases.&#10;&#10;3. Run the evaluation:&#10;&#10;```bash&#10;promptfoo eval&#10;```&#10;&#10;4. View results in your browser:&#10;&#10;```bash&#10;promptfoo view&#10;```&#10;&#10;## Learn more&#10;&#10;- Configuration guide: https://promptfoo.dev/docs/configuration/guide&#10;- All providers: https://promptfoo.dev/docs/providers&#10;- Assertions &amp; metrics: https://promptfoo.dev/docs/configuration/expected-outputs&#10;- Examples: https://github.com/promptfoo/promptfoo/tree/main/examples&#10;" />
+              <option name="updatedContent" value="# Promptfoo prompt evaluation&#10;&#10;## Quick start&#10;&#10;1. Set your API key (if using a cloud provider):&#10;&#10;```bash&#10;export OPENAI_API_KEY=sk-...&#10;# Or for other providers:&#10;# export ANTHROPIC_API_KEY=sk-ant-...&#10;# export GOOGLE_API_KEY=...&#10;```&#10;&#10;2. Edit `promptfooconfig.yaml` to customize prompts, providers, and test cases.&#10;&#10;3. Run the evaluation:&#10;&#10;```bash&#10;promptfoo eval&#10;```&#10;&#10;4. View results in your browser:&#10;&#10;```bash&#10;promptfoo view&#10;```&#10;&#10;## Learn more&#10;&#10;- Configuration guide: https://promptfoo.dev/docs/configuration/guide&#10;- All providers: https://promptfoo.dev/docs/providers&#10;- Assertions &amp; metrics: https://promptfoo.dev/docs/configuration/expected-outputs&#10;- Examples: https://github.com/promptfoo/promptfoo/tree/main/examples&#10;&#10;## Side-by-side chart demo&#10;&#10;Use `promptfooconfig.side-by-side.yaml` to generate results that work well with the Promptfoo chart view.&#10;&#10;- It uses **two comparable prompt variants** against the **same test set**.&#10;- It uses a **local Python provider**, so no external model call is required.&#10;- It returns **numeric scores** through Python assertions, which makes the chart tab useful.&#10;&#10;Run it with:&#10;&#10;```bash&#10;promptfoo eval -c promptfooconfig.side-by-side.yaml&#10;promptfoo view&#10;```&#10;&#10;In the browser, open the latest eval and use the chart or side-by-side comparison to compare the baseline prompt versus the structured prompt.&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

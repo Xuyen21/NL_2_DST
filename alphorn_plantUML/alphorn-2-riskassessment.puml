@@ -29,6 +29,7 @@ System(risk_management_system, risk management system, $color="DarkGreen", $scal
 
 Document(credit_rating_form, credit rating form)
 Document(contract, $label=contract)
+Document(contract2, $label=contract)
 
 Risk(risk_assessment, risk assessment, $note="needs to be present in the system,\nbecause only then the voting result \ncan be entered")
 Risk(risk_assessment2, risk assessement)
@@ -37,10 +38,10 @@ activity(1, riskmanager, fills out, credit_rating_form, with information from, c
 activity(,contract,on,rating_agency_website)
 activity(2,rating_agency_website,generates,report,for, riskmanager)
 
-activity(3, riskmanager, creates, risk_assessment, for, Document: contract)
-activity(,risk_assessment,with, report2)
+activity(3, riskmanager, creates, risk_assessment, for, contract2)
+activity(, contract2, with, report2, in, risk_management_system)
 
-activity(,risk_assessment,in, risk_management_system)
+
 activity(4, riskmanager, decides on, Vote: voting result, for, risk_assessment2)
 activity(,risk_assessment2, in, risk_management_system)
 activity(5, riskmanager, passes on, Document: voted contract,to, salesperson)

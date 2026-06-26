@@ -1,6 +1,8 @@
-1.The risk manager fetches the credit rating for the contract from the rating agency.
+1.The risk manager fetches credit rating for the contract from the rating agency.
+Note on credit rating: An evaluation of the credit risk of the customer,
+Expressed by a letter from A (excellent) to D (poor).
 
-2.The risk manager votes on the contract based on the monthly installment and the credit rating.
+2.The risk manager votes the contract with voting result based on the car price and the credit rating.
 
 3.The risk manager passes the voted contract on to the sales person.
 

@@ -1,11 +1,12 @@
 import json
 
-INIT_LINE = ["@startuml", "!include <domainstory/Domainstory>"]
+from pyarrow import null
+
 ACTOR_STYLE = '$color="DarkGreen", $scale=1.5'
 
 
 def content():
-    test_path = r"C:\code\NL_2_DST\instructor\output\test_pipeline.json"
+    test_path = r"C:\code\NL_2_DST\outputs\json-gpt4o.json"
     with open(test_path, "r", encoding="utf-8") as f:
         data = json.load(f)
         return data
@@ -36,6 +37,14 @@ def init_sprites(work_objects: list[object]):
     return sprites_list
 
 
+# def init_work_objects(work_objects: list[object]):
+#     work_objects_list = []
+#     for work_object in work_objects:
+#         work_obj_name = work_object['name']
+#         work_obj_instances = work_object['instances']
+#
+
+
 def init_work_objects(work_obj_instances: list[object]):
     work_obj_instance_list = []
 
@@ -53,21 +62,85 @@ def init_work_objects(work_obj_instances: list[object]):
     return work_obj_instance_list
 
 
-def init_activities(steps: list[object]):
+def init_activities(activities: list[object]):
     activities_list = []
-    for step in steps:
-        for index, line in enumerate(step['lines']):
-            # within the same step, only assign step number for the first activities. For substep, use empty string
-            order = f'activity({step['step']}' if index == 0 else f'activity( '
-            # preposition and target_id can be null
-            preposition = f', {line['preposition']}' if line['preposition'] is not None else ''
-            target_id = f', {line['target_id']}' if line['target_id'] is not None else ''
-            action = f"{order}, {line['subject_id']}, {line['action']}, {line['object_id']} {preposition} {target_id})"
-            activities_list.append(action)
+    for activity in activities:
+        # within the same step, only assign step number for the first activities. For substep, use empty string
+        order = f'activity({activity['step']}'
+
+        main_activity = activity['main_activity']
+        # preposition and target_id can be null
+        relation = f'{main_activity['relation']}' if main_activity['relation'] is not None else ''
+        target_id = f'{main_activity['target_id']}' if main_activity['target_id'] is not None else ''
+
+        # final syntax
+        action = (f"{order}, {main_activity['subject_id']}, {main_activity['action']},"
+                  f" {main_activity['object_id']}, {relation}, {target_id})")
+
+        activities_list.append(action)
+        sub_activities = activity['sub_activities']
+
+        if sub_activities:
+            for sub_act in sub_activities:
+                sub_action = f"activity( , {sub_act['subject_id']}, {sub_act['relation']}, {sub_act['target_id']})"
+
+                activities_list.append(sub_action)
+
+        # print(f"activities_list: {"\n".join(activities_list)}")
+
     return activities_list
 
 
-def create_plantuml_syntax(story_json):
+test = [
+    {
+        "step": 1,
+        "text": null,
+        "main_activity": {
+            "line_order": 1,
+            "subject_id": "online_leasing_service",
+            "action": "fetches",
+            "object_id": "credit_rating_report",
+            "relation": "for",
+            "target_id": "contract"
+        },
+        "sub_activities": []
+    },
+    {
+        "step": 2,
+        "text": null,
+        "main_activity": {
+            "line_order": 1,
+            "subject_id": "rating_agency_website",
+            "action": "generates",
+            "object_id": "credit_rating_report",
+            "relation": "for",
+            "target_id": "online_leasing_service"
+        },
+        "sub_activities": [
+            {
+                "line_order": 2,
+                "subject_id": "credit_rating",
+                "relation": "from",
+                "target_id": "rating_agency_website"
+            }
+        ]
+    }]
+
+
+# for activity in activities:
+#     for index, line in enumerate(activity['lines']):
+#         # within the same step, only assign step number for the first activities. For substep, use empty string
+#         order = f'activity({activity['step']}' if index == 0 else f'activity( '
+#         # preposition and target_id can be null
+#         preposition = f', {line['preposition']}' if line['preposition'] is not None else ''
+#         target_id = f', {line['target_id']}' if line['target_id'] is not None else ''
+#         action = f"{order}, {line['subject_id']}, {line['action']}, {line['object_id']} {preposition} {target_id})"
+#         activities_list.append(action)
+# return activities_list
+
+
+def create_plantuml_syntax(story_json) -> str:
+    INIT_LINE = ["@startuml", "!include <domainstory/Domainstory>"]
     title = f'title <size:24><b>{story_json["title"]}</b></size>'
     INIT_LINE.append(title)
 
@@ -80,11 +153,17 @@ def create_plantuml_syntax(story_json):
     INIT_LINE.extend(work_objects_list)
 
     # work object instances
-    work_obj_instance_list = init_work_objects(story_json["work_object_instances"])
+    work_obj_instances = []
+    for work_object in story_json["work_objects"]:
+        if "instances" in work_object and work_object["instances"]:
+            work_obj_instances.extend(work_object["instances"])
+
+    work_obj_instance_list = init_work_objects(work_obj_instances)
+    # work_obj_instance_list = init_work_objects(story_json["work_objects"]["instances"])
     INIT_LINE.extend(work_obj_instance_list)
 
     # activities
-    activities_list = init_activities(story_json["steps"])
+    activities_list = init_activities(story_json["activities"])
     INIT_LINE.extend(activities_list)
 
     INIT_LINE.append("@enduml")

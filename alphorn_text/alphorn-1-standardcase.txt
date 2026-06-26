@@ -1,6 +1,6 @@
 1.The customer chooses a specific car from the catalog.
 
-2.The customer ask the salesperson for an offer.
+2.The customer asks the salesperson for an offer.
 
 3.The salesperson offers a contract for a car with a monthly installment to the customer.
 
@@ -16,6 +16,6 @@
 
 9.The salesperson hands over the car to the customer.
 
-10.The customer pays the monthly installment regularly
+10.The customer pays the monthly installment regularly.
 
 11.The customer returns the car to the salesperson after the leasing period.

@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "eval": "promptfoo eval -c .\\evaluations\\evaluatate-instructor\\promptfooconfig.yaml",
+    "evaljson": "promptfoo eval -c .\\evaluations\\evaluatate-instructor\\promptfooconfig.yaml --output results.json",
+    "testeval": "promptfoo eval -c .\\eval-json-output\\promptfooconfig.yaml",
+    "view": "promptfoo view",
+    "promptfoo": "promptfoo"
+  },
+  "devDependencies": {
+    "promptfoo": "^0.121.13"
+  }
+}

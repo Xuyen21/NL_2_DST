@@ -1,8 +1,8 @@
-1.The online leasing service fetches the customer’s credit rating for the contract from the rating agency website.
+1.The online leasing service fetches the credit rating for the contract from the rating agency website.
 
-2.The rating agency website generates a credit rating report and provides it to the online leasing service.
+2.The rating agency website generates a credit rating report for the online leasing service.
 
-3.The online leasing service creates a risk assessment for the contract based on the credit rating report and stores the risk assessment in the risk management system.
+3.The online leasing service creates a risk assessment for the contract and from the credit rating report in the risk management system.
 
 4.The online leasing service notifies the risk manager about the credit rating.
 
