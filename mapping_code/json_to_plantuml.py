@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from pyarrow import null
 
@@ -168,7 +169,8 @@ def create_plantuml_syntax(story_json) -> str:
 
 
 def content():
-    alphorn_3 = r"C:\code\NL_2_DST\alphorn-test-json\output_example_alphorn-1-gemini-flash2.5.json"
+    project_root = Path(__file__).parents[1]
+    alphorn_3 = project_root / "alphorn-test-json" / "output_example_alphorn-2-gemini-flash2.5.json"
     with open(alphorn_3, "r", encoding="utf-8") as f:
         data = json.load(f)
         return data
@@ -176,4 +178,5 @@ def content():
 
 if __name__ == "__main__":
     json_data = content()
-    print(create_plantuml_syntax(json_data))
+    output = Path(__file__).parent / "test.puml"
+    output.write_text(create_plantuml_syntax(json_data), encoding="utf-8")

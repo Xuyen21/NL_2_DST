@@ -6,8 +6,8 @@ from helpers import load_json, normalize_text
 def extract_actors(payload):
     # payload = load_json(payload)
     if isinstance(payload, dict):
-        if "result" in payload and isinstance(payload["result"], dict):
-            return payload["result"].get("actors", [])
+        # if "result" in payload and isinstance(payload["result"], dict):
+        #     return payload["result"].get("actors", [])
         return payload.get("actors", [])
     return []
 
@@ -55,14 +55,20 @@ def compute_actor_metrics(detected_actors, expected_actors):
         "extra": extra,
     }
 
+def compute_work_objects_metrics(actual_work_objects: list[dict], expected_work_objects: list[dict]) -> dict:
+    actual_work_objects = actual_work_objects
+
 
 def grading(output: str, context) -> Union[bool, float, Dict[str, Any]]:
     expected_output = context["vars"]["expected_output"]
 
-    detected_actors = extract_actors(output)
-    expected_actors = extract_actors(expected_output)
 
-    compute_metric = compute_actor_metrics(detected_actors, expected_actors)
+
+    # actual_actors = extract_actors(output)
+    # expected_actors = extract_actors(expected_output)
+    # compute_metric = compute_actor_metrics(actual_actors, expected_actors)
+
+
     return {
         **compute_metric,
         "reason": json.dumps(
@@ -83,21 +89,8 @@ output_path = r"/alphorn-test-json/output_example_alphorn-3.json"
 expected_path = r"C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn-gold-standard\gold-alphorn-3.json"
 
 
-def run_grading_from_files(output_file_path: str, expected_output_path: str) -> Union[bool, float, Dict[str, Any]]:
-    output = load_json(output_file_path)
-    expected_output = load_json(expected_output_path)
 
-    detected_actors = extract_actors(output)
-    expected_actors = extract_actors(expected_output)
-
-    print(f"Detected actors: {[actor.get('name') for actor in detected_actors if isinstance(actor, dict)]}")
-    print(f"Expected actors: {[actor.get('name') for actor in expected_actors if isinstance(actor, dict)]}")
-    compute_metric = compute_actor_metrics(detected_actors, expected_actors)
-    print(f'type of compute_metric: ', type(compute_metric))
-
-    return compute_metric
 
 
 if __name__ == "__main__":
-    result = run_grading_from_files(output_path, expected_path)
-    print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
+    pass

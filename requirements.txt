@@ -10,6 +10,7 @@ plantuml
 uv==0.11.21
 litellm==1.89.0
 spacy
+pytest
 
 
 # erdantic is optional and not required for the main app.
