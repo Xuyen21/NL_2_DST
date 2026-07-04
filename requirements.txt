@@ -9,6 +9,8 @@ requests
 plantuml
 uv==0.11.21
 litellm==1.89.0
+spacy
+
 
 # erdantic is optional and not required for the main app.
 # On Windows it pulls in pygraphviz, which needs native Graphviz tooling to build.

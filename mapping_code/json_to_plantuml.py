@@ -5,13 +5,6 @@ from pyarrow import null
 ACTOR_STYLE = '$color="DarkGreen", $scale=1.5'
 
 
-def content():
-    test_path = r"C:\code\NL_2_DST\outputs\json-gpt4o.json"
-    with open(test_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-        return data
-
-
 def init_actors(actors: list[object]):
     actors_list = []
     for actor in actors:
@@ -155,8 +148,12 @@ def create_plantuml_syntax(story_json) -> str:
     # work object instances
     work_obj_instances = []
     for work_object in story_json["work_objects"]:
-        if "instances" in work_object and work_object["instances"]:
-            work_obj_instances.extend(work_object["instances"])
+        for instance in work_object["instances"]:
+            work_obj_instances.append({
+                "work_object_id": work_object["id"],
+                "instance_id": instance["instance_id"],
+                "note": instance.get("note")
+            })
 
     work_obj_instance_list = init_work_objects(work_obj_instances)
     # work_obj_instance_list = init_work_objects(story_json["work_objects"]["instances"])
@@ -168,6 +165,13 @@ def create_plantuml_syntax(story_json) -> str:
 
     INIT_LINE.append("@enduml")
     return "\n".join(INIT_LINE)
+
+
+def content():
+    alphorn_3 = r"C:\code\NL_2_DST\alphorn-test-json\output_example_alphorn-1-gemini-flash2.5.json"
+    with open(alphorn_3, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        return data
 
 
 if __name__ == "__main__":

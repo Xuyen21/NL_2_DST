@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: view performance
+
+#evaluateOptions:
+#  maxConcurrency: 10
+
+#prompts:
+#  - file://prompt.txt
+
+# 1. Define how to aggregate the score across the test cases
+derivedMetrics:
+  - name: "Total Correct Pairs"
+    # Promptfoo averages 'pairs_score' across all test cases. 
+    # Since you have 3 test cases, multiplying by 3 gives you the total sum.
+    value: "pairs_score * 3"
+
+providers:
+  - id: file://provider_requests.py:one_phase_zeroshot_gpt
+    config:
+      model: gpt-4o
+      label: GPT-4o
+      temperature: 0
+#  - id: file://provider_requests.py:one_phase_zeroshot_gemini
+#    config:
+#      model: gemini/gemini-2.5-flash
+#      label: gemini/gemini-2.5-flash
+#      temperature: 0
+  - id: file://provider_requests.py:one_phase_zeroshot_gpt_mini
+    config:
+      model: gpt-4o-mini
+      label: GPT-4o-mini
+      temperature: 0
+
+tests:
+  - vars:
+      input:
+        file://alphorn_text//alphorn-1-standardcase.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-1.json
+    assert: &grading_assert
+      - type: python
+        value: file://../scoring/grading.py:grading
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-2-riskassessment.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-2.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-3-riskassessment.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-3.json
+    assert: *grading_assert

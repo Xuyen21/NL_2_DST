@@ -1,0 +1,312 @@
+{
+  "title": "Car leasing process",
+  "actors": [
+    {
+      "id": "customer",
+      "name": "customer",
+      "type": "Person"
+    },
+    {
+      "id": "salesperson",
+      "name": "salesperson",
+      "type": "Person"
+    },
+    {
+      "id": "risk_manager",
+      "name": "risk manager",
+      "type": "Person"
+    }
+  ],
+  "work_objects": [
+    {
+      "id": "car",
+      "name": "car",
+      "description": "a vehicle selected, offered, handed over, and returned in the leasing process",
+      "instances": [
+        {
+          "instance_id": "car_1",
+          "note": null
+        },
+        {
+          "instance_id": "car_2",
+          "note": null
+        },
+        {
+          "instance_id": "car_3",
+          "note": null
+        },
+        {
+          "instance_id": "car_4",
+          "note": "after the leasing period"
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiCar",
+        "svg": "M5,11L6.5,6.5H17.5L19,11M17.5,16A1.5,1.5 0 0,1 16,14.5A1.5,1.5 0 0,1 17.5,13A1.5,1.5 0 0,1 19,14.5A1.5,1.5 0 0,1 17.5,16M6.5,16A1.5,1.5 0 0,1 5,14.5A1.5,1.5 0 0,1 6.5,13A1.5,1.5 0 0,1 8,14.5A1.5,1.5 0 0,1 6.5,16M18.92,6C18.72,5.42 18.16,5 17.5,5H6.5C5.84,5 5.28,5.42 5.08,6L3,12V20A1,1 0 0,0 4,21H5A1,1 0 0,0 6,20V19H18V20A1,1 0 0,0 19,21H20A1,1 0 0,0 21,20V12L18.92,6Z"
+      }
+    },
+    {
+      "id": "catalog",
+      "name": "catalog",
+      "description": "A structured collection or display of available products and options compiled for browsing and selection.",
+      "instances": [
+        {
+          "instance_id": "catalog_1",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiViewList",
+        "svg": "M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
+      }
+    },
+    {
+      "id": "offer",
+      "name": "offer",
+      "description": "a proposed leasing offer requested by the customer",
+      "instances": [
+        {
+          "instance_id": "offer_1",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiOffer",
+        "svg": "M21 13C21.6 13 22.1 13.2 22.4 13.6C22.8 14 23 14.5 23 15L15 18L8 16V7H9.9L17.2 9.7C17.7 9.9 18 10.3 18 10.8C18 11.1 17.9 11.4 17.7 11.6C17.5 11.8 17.2 12 16.8 12H14L12.3 11.3L12 12.2L14 13H21M2 7H6V18H2V7Z"
+      }
+    },
+    {
+      "id": "contract",
+      "name": "contract",
+      "description": "a leasing agreement offered, signed, passed on, assessed, and voted on",
+      "instances": [
+        {
+          "instance_id": "contract_1",
+          "note": null
+        },
+        {
+          "instance_id": "contract_2",
+          "note": null
+        },
+        {
+          "instance_id": "contract_3",
+          "note": null
+        },
+        {
+          "instance_id": "contract_4",
+          "note": null
+        },
+        {
+          "instance_id": "contract_5",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiFileSign",
+        "svg": "M19.7 12.9L14 18.6H11.7V16.3L17.4 10.6L19.7 12.9M23.1 12.1C23.1 12.4 22.8 12.7 22.5 13L20 15.5L19.1 14.6L21.7 12L21.1 11.4L20.4 12.1L18.1 9.8L20.3 7.7C20.5 7.5 20.9 7.5 21.2 7.7L22.6 9.1C22.8 9.3 22.8 9.7 22.6 10C22.4 10.2 22.2 10.4 22.2 10.6C22.2 10.8 22.4 11 22.6 11.2C22.9 11.5 23.2 11.8 23.1 12.1M3 20V4H10V9H15V10.5L17 8.5V8L11 2H3C1.9 2 1 2.9 1 4V20C1 21.1 1.9 22 3 22H15C16.1 22 17 21.1 17 20H3M11 17.1C10.8 17.1 10.6 17.2 10.5 17.2L10 15H8.5L6.4 16.7L7 14H5.5L4.5 19H6L8.9 16.4L9.5 18.7H10.5L11 18.6V17.1Z"
+      }
+    },
+    {
+      "id": "risk",
+      "name": "risk",
+      "description": "the risk being assessed for a contract",
+      "instances": [
+        {
+          "instance_id": "risk_1",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiShieldAlert",
+        "svg": "M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5M11,7H13V13H11M11,15H13V17H11"
+      }
+    },
+    {
+      "id": "voting_result",
+      "name": "voting result",
+      "description": "the result of the voting on a contract",
+      "instances": [
+        {
+          "instance_id": "voting_result_1",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiVote",
+        "svg": "M18,13H17.32L15.32,15H17.23L19,17H5L6.78,15H8.83L6.83,13H6L3,16V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V16L18,13M17,7.95L12.05,12.9L8.5,9.36L13.46,4.41L17,7.95M12.76,2.29L6.39,8.66C6,9.05 6,9.68 6.39,10.07L11.34,15C11.73,15.41 12.36,15.41 12.75,15L19.11,8.66C19.5,8.27 19.5,7.64 19.11,7.25L14.16,2.3C13.78,1.9 13.15,1.9 12.76,2.29Z"
+      }
+    },
+    {
+      "id": "monthly_installment",
+      "name": "monthly installment",
+      "description": "the recurring payment amount paid by the customer",
+      "instances": [
+        {
+          "instance_id": "monthly_installment_1",
+          "note": null
+        },
+        {
+          "instance_id": "monthly_installment_2",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiCashSync",
+        "svg": "M3 6V18H13.32C13.1 17.33 13 16.66 13 16H7C7 14.9 6.11 14 5 14V10C6.11 10 7 9.11 7 8H17C17 9.11 17.9 10 19 10V10.06C19.67 10.06 20.34 10.18 21 10.4V6H3M12 9C10.3 9.03 9 10.3 9 12S10.3 14.94 12 15C12.38 15 12.77 14.92 13.14 14.77C13.41 13.67 13.86 12.63 14.97 11.61C14.85 10.28 13.59 8.97 12 9M19 11L21.25 13.25L19 15.5V14C17.15 14 15.94 15.96 16.76 17.62L15.67 18.71C13.91 16.05 15.81 12.5 19 12.5V11M19 22L16.75 19.75L19 17.5V19C20.85 19 22.06 17.04 21.24 15.38L22.33 14.29C24.09 16.95 22.19 20.5 19 20.5V22"
+      }
+    }
+  ],
+  "activities": [
+    {
+      "step": 1,
+      "text": "The customer chooses a specific car from the catalog.",
+      "main_activity": {
+        "subject_id": "customer",
+        "action": "chooses",
+        "object_id": "car_1",
+        "relation": "from",
+        "target_id": "catalog_1"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 2,
+      "text": "The customer asks the salesperson for an offer.",
+      "main_activity": {
+        "subject_id": "customer",
+        "action": "asks",
+        "object_id": "offer_1",
+        "relation": "from",
+        "target_id": "salesperson"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 3,
+      "text": "The salesperson offers a contract for a car with a monthly installment to the customer.",
+      "main_activity": {
+        "subject_id": "salesperson",
+        "action": "offers",
+        "object_id": "contract_1",
+        "relation": null,
+        "target_id": null
+      },
+      "sub_activities": [
+        {
+          "line_order": 2,
+          "subject_id": "contract_1",
+          "relation": "for",
+          "target_id": "car_2"
+        },
+        {
+          "line_order": 3,
+          "subject_id": "car_2",
+          "relation": "with",
+          "target_id": "monthly_installment_1"
+        },
+        {
+          "line_order": 4,
+          "subject_id": "monthly_installment_1",
+          "relation": "to",
+          "target_id": "customer"
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "text": "The customer signs the contract with the salesperson.",
+      "main_activity": {
+        "subject_id": "customer",
+        "action": "signs",
+        "object_id": "contract_2",
+        "relation": "with",
+        "target_id": "salesperson"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 5,
+      "text": "The salesperson passes the contract on to the risk manager.",
+      "main_activity": {
+        "subject_id": "salesperson",
+        "action": "passes",
+        "object_id": "contract_3",
+        "relation": "on to",
+        "target_id": "risk_manager"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 6,
+      "text": "The risk manager assesses the risk for the contract.",
+      "main_activity": {
+        "subject_id": "risk_manager",
+        "action": "assesses",
+        "object_id": "risk_1",
+        "relation": "for",
+        "target_id": "contract_4"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 7,
+      "text": "The risk manager votes on the contract.",
+      "main_activity": {
+        "subject_id": "risk_manager",
+        "action": "votes",
+        "object_id": "contract_5",
+        "relation": null,
+        "target_id": null
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 8,
+      "text": "The risk manager informs the salesperson about the voting result.",
+      "main_activity": {
+        "subject_id": "risk_manager",
+        "action": "informs about",
+        "object_id": "voting_result_1",
+        "relation": null,
+        "target_id": "salesperson"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 9,
+      "text": "The salesperson hands over the car to the customer.",
+      "main_activity": {
+        "subject_id": "salesperson",
+        "action": "hands over",
+        "object_id": "car_3",
+        "relation": "to",
+        "target_id": "customer"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 10,
+      "text": "The customer pays the monthly installment regularly.",
+      "main_activity": {
+        "subject_id": "customer",
+        "action": "pays regularly",
+        "object_id": "monthly_installment_2",
+        "relation": null,
+        "target_id": null
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 11,
+      "text": "The customer returns the car to the salesperson after the leasing period.",
+      "main_activity": {
+        "subject_id": "customer",
+        "action": "returns",
+        "object_id": "car_4",
+        "relation": "to",
+        "target_id": "salesperson"
+      },
+      "sub_activities": []
+    }
+  ]
+}

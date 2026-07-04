@@ -40,7 +40,7 @@ def get_icon_store():
 
 def build_icon_query(work_object: WorkObject) -> str:
     return (
-        f"{work_object.type}. "
+        # f"{work_object.type}. "
         f"{work_object.description}. "
         f"{work_object.name}"
     )
@@ -67,6 +67,8 @@ def search_icons(extracted_story: DomainStory) -> DomainStory:
             # Chroma returns lists of lists. index [0] refers to the first (and only) query text.
             if results and results["ids"] and len(results["ids"][0]) > 0:
                 metadata = results["metadatas"][0][0]
+                # distance_score = results["distances"][0][0] # the least the better, the best is 0
+                # confidence = 1 / (1 + distance_score)
 
                 mdi_name = metadata.get("jsExportName")
                 svg_path = metadata.get("svgPath")

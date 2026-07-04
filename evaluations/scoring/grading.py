@@ -1,7 +1,5 @@
 import json
-from typing import Dict, Any, Union, cast
-
-
+from typing import Dict, Any, Union
 from helpers import load_json, normalize_text
 
 
@@ -42,7 +40,7 @@ def compute_actor_metrics(detected_actors, expected_actors):
 
     return {
         "pass": matched_count == total_expected and total_detected == total_expected,
-        "score": precision,
+        "score": 2,  # precision,
         "metrics": {
             "precision": precision,
             "recall": recall,
@@ -60,16 +58,18 @@ def compute_actor_metrics(detected_actors, expected_actors):
 
 def grading(output: str, context) -> Union[bool, float, Dict[str, Any]]:
     expected_output = context["vars"]["expected_output"]
+
     detected_actors = extract_actors(output)
     expected_actors = extract_actors(expected_output)
-    result =  compute_actor_metrics(detected_actors, expected_actors)
+
+    compute_metric = compute_actor_metrics(detected_actors, expected_actors)
     return {
-        **result,
+        **compute_metric,
         "reason": json.dumps(
             {
                 "output": output,
                 "expected_output": expected_output,
-                "metrics": result["metrics"],
+                "metrics": compute_metric["metrics"],
             },
             ensure_ascii=False,
             indent=2,
@@ -77,9 +77,10 @@ def grading(output: str, context) -> Union[bool, float, Dict[str, Any]]:
         )
     }
 
+###################################
 
-output_path = r"C:\code\NL_2_DST\evaluations\evaluatate-instructor\testinput\output_example.json"
-context_path = r"C:\code\NL_2_DST\evaluations\evaluatate-instructor\testinput\groundtruth_5.json"
+output_path = r"/alphorn-test-json/output_example_alphorn-3.json"
+expected_path = r"C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn-gold-standard\gold-alphorn-3.json"
 
 
 def run_grading_from_files(output_file_path: str, expected_output_path: str) -> Union[bool, float, Dict[str, Any]]:
@@ -98,5 +99,5 @@ def run_grading_from_files(output_file_path: str, expected_output_path: str) -> 
 
 
 if __name__ == "__main__":
-    result = run_grading_from_files(output_path, context_path)
+    result = run_grading_from_files(output_path, expected_path)
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))

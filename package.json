@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "eval": "promptfoo eval -c .\\evaluations\\evaluatate-instructor\\promptfooconfig.yaml",
-    "evaljson": "promptfoo eval -c .\\evaluations\\evaluatate-instructor\\promptfooconfig.yaml --output results.json",
+    "eval": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml",
+    "evaljson": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output results_1.json",
     "testeval": "promptfoo eval -c .\\eval-json-output\\promptfooconfig.yaml",
     "view": "promptfoo view",
     "promptfoo": "promptfoo"

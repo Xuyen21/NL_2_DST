@@ -14,21 +14,6 @@ from utils.api_request import api_response
 
 load_dotenv()
 
-# Test path
-alphorn_1_path = r"C:\code\NL_2_DST\alphorn_text\alphorn-1-standardcase.txt"
-alphorn_2_path = r"C:\code\NL_2_DST\alphorn_text\alphorn-2-riskassessment.txt"
-alphorn_3_path = r"C:\code\NL_2_DST\alphorn_text\alphorn-3-riskassessment.txt"
-alphorn_5_path = r"C:\code\NL_2_DST\alphorn_text\alphorn-5-riskassessment-happy-path.txt"
-
-
-# ---------------
-def load_content(path):
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-content = load_content(alphorn_1_path)
-
 client = instructor.from_openai(openai_client)
 
 
@@ -36,7 +21,7 @@ def pipeline(response_model, prompt, content):
     start_time = time.perf_counter()
     print(f"Started pipeline: {start_time}")
 
-    model = "gpt-5.4"  # "gpt-4o-mini"
+    model = 'gemini/gemini-2.5-flash'  # "gpt-4o-mini"   #"gpt-5.4"
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": content}
@@ -55,15 +40,28 @@ def pipeline(response_model, prompt, content):
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(final_json_output, f, ensure_ascii=False, indent=2)
 
-    # print(f"Saved to {output_path}")
+    print(f"Saved to {output_path}")
     # print (f'type final json: {type(final_json_output)}')
-    plantuml_syntax = create_plantuml_syntax(final_json_output)
-    # # print(f'type: {type(plantuml_syntax)}')
-    print(f"plantuml_syntax: {plantuml_syntax}")
-    return plantuml_syntax
+    # plantuml_syntax = create_plantuml_syntax(final_json_output)
+    # # # print(f'type: {type(plantuml_syntax)}')
+    # print(f"plantuml_syntax \n: {plantuml_syntax}")
+    # return plantuml_syntax
 
+
+alphorn_1 = r"C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn_text\alphorn-1-standardcase.txt"
+
+alphorn_2 = r'C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn_text\alphorn-2-riskassessment.txt'
+
+
+# ---------------
+def load_content(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+content = load_content(alphorn_2)
 
 if __name__ == "__main__":
-    output_path = r"C:\code\NL_2_DST\alphorn-gold-standard\alphorn-1-standard-case-gpt5.4.json"
+    output_path = r"C:\code\NL_2_DST\alphorn-test-json\output_example_alphorn-2-gemini-flash2.5.json"
     story = pipeline(response_model=DomainStory, prompt=SYSTEM_PROMPT, content=content)
     # print("type: ", type(story))

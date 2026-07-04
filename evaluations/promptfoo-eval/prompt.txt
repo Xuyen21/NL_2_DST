@@ -1,0 +1,8 @@
+You are an expert in Domain Storytelling for Car Leasing.
+Extract a structured Domain Story with actors, canonical work objects from {{input}}
+
+1. ACTOR: Performs an action (e.g., 'The Dealer calculates').
+2. WORK OBJECT: Is acted upon (e.g., 'The Dealer signs the Contract').
+3. PASSIVE SYSTEMS: If a system is just a place for storage (e.g., 'stored in the database'),
+   it is a Work Object.
+4. Create one canonical WorkObject per unique work object concept.
