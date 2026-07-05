@@ -1,15 +1,38 @@
-from typing import Any
+from evaluations.verification import VerifyOutput, normalize_text
+from verification import VerificationResult
+from verification.stats import ActorsStats
 
-from evaluations.verification import VerifyOutput
 
+class VerifyActors(VerifyOutput):
+    """Verifier for actors comparing against an expected output"""
 
-class VerifyActivities(VerifyOutput):
-    """Verifier for activities comparing against an expected output"""
+    def verify(self) -> VerificationResult[ActorsStats]:
+        # Map normalized expected names to their full objects for instant lookup
+        expected_names_map = {normalize_text(obj["name"]): obj for obj in self.expected_output}
 
-    def __init__(self, actual_output: list[dict], expected_output: list[dict]):
-        self.actual_output = actual_output
-        self.expected_output = expected_output
+        correct_fields = 0
+        extra_fields = 0
 
-    def verify(self) -> dict[str, Any]:
+        for output_obj in self.actual_output:
+            obj_name = normalize_text(output_obj.get("name", ""))
+            obj_type = output_obj.get("type")
+
+            # Check if the generated work object exists in our expected map
+            if obj_name in expected_names_map:
+                # 1. The name matched correctly
+                correct_fields += 1
+
+                # Fetch the actual expected object using the name as the key
+                expected_object = expected_names_map[obj_name]
+
+                # 2. Go further to check if the type matches
+                if obj_type == expected_object.get("type"):
+                    correct_fields += 1
+                else:
+                    # Name matched, but type was incorrect (1 extra incorrect field)
+                    extra_fields += 1
+            else:
+                # The entire output work object wasn't in the expected list (2 extra incorrect fields)
+                extra_fields += 2
         # TODO: implement
-        return {}
+        return VerificationResult(correct_fields, extra_fields, ActorsStats(), ActorsStats())

@@ -5,7 +5,6 @@ semantic_similarity, init_fields)
 """
 from evaluations.verification import (
     count_primitive_kv_pairs,
-    init_fields,
     normalize_text,
     semantic_similarity,
 )
@@ -99,22 +98,3 @@ class TestSemanticSimilarity:
         similar = semantic_similarity("cat", "cat")
         unrelated = semantic_similarity("cat", "invoice")
         assert similar["similarity_score"] > unrelated["similarity_score"]
-
-
-# ===========================================================================
-# init_fields
-# ===========================================================================
-class TestInitFields:
-    def test_structure(self):
-        fields = init_fields()
-        assert fields["total"] == 0
-        assert fields["work_object"]["total"] == 0
-        assert fields["work_object"]["detail"] == []
-        assert fields["work_object_instances"]["total"] == 0
-        assert fields["work_object_instances"]["detail"] == []
-
-    def test_returns_independent_instances(self):
-        a = init_fields()
-        b = init_fields()
-        a["work_object"]["detail"].append("something")
-        assert b["work_object"]["detail"] == []

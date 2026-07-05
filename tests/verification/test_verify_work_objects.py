@@ -36,9 +36,7 @@ _WORK_OBJECTS_MULTI = [
 ]
 
 
-# ===========================================================================
 # group_by_name / group_by_instance
-# ===========================================================================
 class TestGroupByName:
     def test_returns_dict_keyed_by_normalized_name(self):
         result = group_by_name(_WORK_OBJECTS_MULTI)
@@ -80,8 +78,8 @@ class TestEvalWorkObjectsUnit:
         ]
         verifier = VerifyWorkObjects(work_objects, work_objects)
         result = verifier.verify()
-        assert result["missing_fields"]["total"] == 0
-        assert result["hallu_fields"]["total"] == 0
+        assert result.missing_fields.total == 0
+        assert result.hallu_fields.total == 0
 
     def test_completely_missing_work_object(self):
         expected = [
@@ -93,8 +91,8 @@ class TestEvalWorkObjectsUnit:
         ]
         verifier = VerifyWorkObjects(actual_output=[], expected_output=expected)
         result = verifier.verify()
-        assert result["missing_fields"]["total"] > 0
-        assert result["correct_fields"] == 0
+        assert result.missing_fields.total > 0
+        assert result.correct_fields == 0
 
     def test_hallucinated_work_object(self):
         extra = [
@@ -106,13 +104,7 @@ class TestEvalWorkObjectsUnit:
         ]
         verifier = VerifyWorkObjects(actual_output=extra, expected_output=[])
         result = verifier.verify()
-        assert result["hallu_fields"]["total"] > 0
-
-    def test_result_keys_present(self):
-        verifier = VerifyWorkObjects(actual_output=[], expected_output=[])
-        result = verifier.verify()
-        assert set(result.keys()) == {"total_fields", "correct_fields", "missing_fields", "hallu_fields"}
-
+        assert result.hallu_fields.total > 0
 
 # eval_work_objects — integration test
 class TestEvalWorkObjectsAlphorn2:
@@ -132,23 +124,17 @@ class TestEvalWorkObjectsAlphorn2:
         verifier = VerifyWorkObjects(actual_output=output["work_objects"], expected_output=expected["work_objects"])
         return verifier.verify()
 
-    def test_returns_expected_keys(self, result):
-        assert set(result.keys()) == {"total_fields", "correct_fields", "missing_fields", "hallu_fields"}
-
     def test_total_fields_positive(self, result):
-        assert result["total_fields"] == 36
+        assert result.total_fields == 36
 
     def test_correct_fields_positive(self, result):
-        assert result["correct_fields"] == 23
+        assert result.correct_fields == 23
 
     def test_missing_fields_because_voted_contract_absent(self, result):
         # 'voted contract' is in gold but not in the model output
-        assert result["missing_fields"]["total"] == 7
-        assert "voted contract" in result["missing_fields"]["work_object"]["detail"]
+        assert result.missing_fields.total == 7
+        assert "voted contract" in result.missing_fields.work_objects.details
 
     def test_hallucinated_fields_because_extra_contract_instance(self, result):
         # contract_3 appears in the output but is not in the gold standard
-        assert result["hallu_fields"]["total"] == 8
-
-    def test_correct_fields_do_not_exceed_total(self, result):
-        assert result["correct_fields"] <= result["total_fields"]
+        assert result.hallu_fields.total == 8

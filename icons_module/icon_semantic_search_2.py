@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 
@@ -7,7 +6,6 @@ import chromadb
 from chromadb.utils import embedding_functions
 from dotenv import load_dotenv
 
-from evaluations.scoring.helpers import load_json
 from text_to_json.schema_design import DomainStory, Icon, WorkObject
 
 load_dotenv()

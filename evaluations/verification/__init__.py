@@ -1,26 +1,11 @@
 import json
-from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
 import spacy
 
-
-def init_fields() -> dict[str, int | dict[str, int | list[Any]]]:
-    return {'total': 0,
-            'work_object': {
-                'total': 0,
-                'detail': []
-            },
-            'work_object_instances': {
-                'total': 0,
-                'detail': []
-            },
-            'note': {
-                'total': 0,
-                'detail': []
-            }
-            }
+from verification.stats import Stats, StatsItem
+from verification.verification_result import VerificationResult
 
 
 def normalize_text(text):
@@ -110,9 +95,13 @@ def semantic_similarity(extracted_text, expected_text):
     return result
 
 
+class VerifyOutput:
+    """Base class for verification results."""
 
-class VerifyOutput(ABC):
-    @abstractmethod
-    def verify(self) -> dict[str, Any]:
-        """verify if a field is correct, hallucinated or missing"""
-        pass
+    def __init__(self, actual_output, expected_output):
+        self.actual_output = actual_output
+        self.expected_output = expected_output
+
+    def verify(self) -> VerificationResult:
+        """Verify if a field is correct, hallucinated or missing."""
+        raise NotImplementedError("Subclasses must implement verify().")
