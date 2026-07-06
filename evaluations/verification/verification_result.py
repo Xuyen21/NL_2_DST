@@ -13,3 +13,4 @@ class VerificationResult(Generic[TStats]):
     correct_fields: int
     missing_fields: TStats
     hallu_fields: TStats
+

@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from typing import Any
 
 import spacy
 
@@ -76,9 +75,6 @@ def semantic_similarity(extracted_text, expected_text):
         result['case'] = 'missing'
         return result
     if actual_text and not exp_text:
-        print(
-            'Warning: Expected text is not empty, but extracted text is empty. This may indicate a missing extraction.')
-        # Extracted is not empty/null, expected is --> omission
         result['similarity_score'] = 0.0
         result['case'] = 'hallucination'
         return result
@@ -98,7 +94,7 @@ def semantic_similarity(extracted_text, expected_text):
 class VerifyOutput:
     """Base class for verification results."""
 
-    def __init__(self, actual_output, expected_output):
+    def __init__(self, actual_output: list[dict], expected_output: list[dict]) -> None:
         self.actual_output = actual_output
         self.expected_output = expected_output
 

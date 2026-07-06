@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from evaluations.verification import load_json
-from evaluations.verification.verify_work_objects import group_by_name, group_by_instance, VerifyWorkObjects
+from evaluations.verification.verify_work_objects import group_by_key, group_by_instance, VerifyWorkObjects
 
 # Path to real test fixtures
 _PROJECT_ROOT = Path(__file__).parents[2]
@@ -39,17 +39,17 @@ _WORK_OBJECTS_MULTI = [
 # group_by_name / group_by_instance
 class TestGroupByName:
     def test_returns_dict_keyed_by_normalized_name(self):
-        result = group_by_name(_WORK_OBJECTS_MULTI)
+        result = group_by_key("name", _WORK_OBJECTS_MULTI)
         assert "invoice" in result
         assert "contract" in result
 
     def test_preserves_original_object(self):
-        result = group_by_name(_WORK_OBJECTS_SINGLE)
+        result = group_by_key("name", _WORK_OBJECTS_SINGLE)
         assert result["contract"]["description"] == "A legal agreement."
 
     def test_normalizes_mixed_case(self):
         objects = [{"name": "Risk Assessment", "description": "d", "instances": []}]
-        result = group_by_name(objects)
+        result = group_by_key("name", objects)
         assert "risk assessment" in result
 
 
@@ -105,6 +105,7 @@ class TestEvalWorkObjectsUnit:
         verifier = VerifyWorkObjects(actual_output=extra, expected_output=[])
         result = verifier.verify()
         assert result.hallu_fields.total > 0
+
 
 # eval_work_objects — integration test
 class TestEvalWorkObjectsAlphorn2:

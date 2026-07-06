@@ -63,7 +63,29 @@ class WorkObjectStats(Stats):
 
 
 class ActivitiesStats(Stats):
-    pass
+    STEP_FIELD = "step"
+    MAIN_ACTIVITY_FIELD = "main_activity"
+    SUB_ACTIVITIES_FIELD = "sub_activities"
+
+    def __init__(self):
+        super().__init__()
+        self._init_fields(
+            self.MAIN_ACTIVITY_FIELD,
+            self.SUB_ACTIVITIES_FIELD,
+        )
+
+    @property
+    def step(self) -> StatsItem:
+        return self._get_field(self.STEP_FIELD)
+
+    @property
+    def main_activity(self) -> StatsItem:
+        return self._get_field(self.MAIN_ACTIVITY_FIELD)
+
+    @property
+    def sub_activities(self) -> StatsItem:
+        return self._get_field(self.SUB_ACTIVITIES_FIELD)
+
 
 class ActorsStats(Stats):
     pass

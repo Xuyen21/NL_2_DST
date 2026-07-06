@@ -11,8 +11,8 @@ def group_by_instance(expected_work_objects: list[dict]) -> list[Any]:
     return list(itertools.chain.from_iterable(x['instances'] for x in expected_work_objects))
 
 
-def group_by_name(expected_work_objects: list[dict]) -> dict[str, dict]:
-    return {normalize_text(obj["name"]): obj for obj in expected_work_objects}
+def group_by_key(key: str, expected_work_objects: list[dict]) -> dict[str, dict]:
+    return {normalize_text(obj[key]): obj for obj in expected_work_objects}
 
 
 class VerifyWorkObjects(VerifyOutput):
@@ -26,9 +26,9 @@ class VerifyWorkObjects(VerifyOutput):
         correct_fields = 0
         missing_fields = WorkObjectStats()
         hallu_fields = WorkObjectStats()
-
-        expected_names = group_by_name(self.expected_output)
-        actual_names = group_by_name(self.actual_output)
+        #
+        expected_names = group_by_key("name", self.expected_output)
+        actual_names = group_by_key("name", self.actual_output)
 
         expected_names_keys = set(expected_names.keys())  # a set of str
         actual_names_keys = set(actual_names.keys())
@@ -54,12 +54,12 @@ class VerifyWorkObjects(VerifyOutput):
         # check missing instances when the work object is correctly extracted but some instances are missing
         for name in correct_names:
             expected_obj = expected_names[name]
-            output_obj = actual_names[name]
+            actual_obj = actual_names[name]
 
             correct_fields += 1
 
             # check the description
-            output_description = output_obj["description"]
+            output_description = actual_obj["description"]
             expected_description = expected_obj["description"]
             description_similarity = semantic_similarity(output_description, expected_description)
             if description_similarity['similarity_score'] >= 0.75:
@@ -72,7 +72,7 @@ class VerifyWorkObjects(VerifyOutput):
                     missing_fields.increase_total()
 
             # check for instances
-            output_instances = output_obj["instances"]
+            output_instances = actual_obj["instances"]
             expected_instances = expected_obj["instances"]
 
             output_instances_map = {obj['instance_id']: obj['note'] for obj in output_instances}
