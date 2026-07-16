@@ -1,5 +1,6 @@
 # ignore the generated results from git
 result_*
+manual_evaluation_output/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

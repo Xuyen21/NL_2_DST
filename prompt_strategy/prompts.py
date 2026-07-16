@@ -13,11 +13,14 @@ every extracted element is strictly grounded in the provided text.
 ONE_PHASE_PROMPT = """
 Read the provided domain story and extract all relevant elements into the provided DomainStory schema.
 
-Rules for Extraction:
-1. Extract elements exactly as explicitly mentioned in the text.
-2. Do not invent, hallucinate, or assume elements that are not present.
-3. Do not merge different work objects just because they share words.
-4. Strictly follow the constraints and definitions provided in the schema field descriptions.
+Rules:
+1. Extract elements exactly as explicitly stated in the text. Do not invent or assume elements.
+2. Each work object is a noun (the 'what'), not a verb or preposition. Do not merge different work objects.
+3. The action field contains only the verb (and its preposition if needed), never the work object noun.
+4. subject_id in an activity must always be an actor ID, not a work object ID.
+5. Each step number must be unique — do not repeat the same step.
+6. Count work object instances by how many separate sentences mention that object. Do not over-count.
+7. Set note to null unless the original text contains an explicit note, parenthetical remark, or multi-word temporal/conditional clause.
 
 Text:
 {user_story}
@@ -51,9 +54,9 @@ Let's think step by step.
 PROMPT_1 = """
 Read the domain story below and extract all actors, work objects, and activities.
 
-Count each work object exactly as explicitly mentioned in the text.
-Do not invent elements.
-Do not merge different work objects just because they share words.
+Count each work object by how many separate sentences mention it — no more, no less.
+A work object is always a noun (e.g., 'contract', 'car'), never a verb or preposition.
+Do not invent elements. Do not merge different work objects that share a word.
 
 Do not use JSON or strict schema formatting.
 
@@ -95,6 +98,11 @@ Domain Story:
 
 PROMPT_2 = """
 Using the previous response, map the extracted elements into the exact provided DomainStory schema.
-For each work object, create exactly as many instances as were identified in the previous response.
-Preserve the mention counts from the previous response and do not add or remove instances.
+
+Important:
+- Create exactly as many work object instances as identified in the previous response. Do not add or remove any.
+- The action field must contain only the verb (and its preposition), never the work object noun.
+- subject_id in each activity must be an actor ID, not a work object ID.
+- Each step number must be unique.
+- Set note to null unless the original text explicitly contains a note, parenthetical remark, or multi-word temporal/conditional clause.
 """
