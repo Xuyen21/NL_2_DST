@@ -5,19 +5,29 @@ description: view performance
 #  maxConcurrency: 10
 
 providers:
+  - id: file://provider_requests.py:one_phase_zeroshot_qwen
+    config:
+      model: qwen3.7-max
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: Qwen3.7-Max
+  - id: file://provider_requests.py:one_phase_zeroshot_deepseek
+    config:
+      model: deepseek-v4-flash
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: DeepSeek v4 Flash
+  - id: file://provider_requests.py:one_phase_zeroshot_glm
+    config:
+      model: glm-5.2
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: GLM-5.2
   - id: file://provider_requests.py:one_phase_zeroshot_gpt
     config:
-      model: openrouter/qwen/qwen3.7-plus
-      label: qwen 3.7 Max
-#  - id: file://provider_requests.py:one_phase_zeroshot_gemini
-#    config:
-#      model: gemini/gemini-3.5-flash #gemini/gemini-3.1-pro-preview gemini/gemini-2.5-pro
-#      label: Gemini 3 Pro
-#  #
-#  - id: file://provider_requests.py:one_phase_zeroshot_claude
-#    config:
-#      model: anthropic/claude-sonnet-4-6
-#      label: Claude Sonnet
+      model: gpt-5.4
+      provider: openai
+      label: Gpt-5.4
 
 
 

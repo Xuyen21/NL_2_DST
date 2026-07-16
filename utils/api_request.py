@@ -1,6 +1,5 @@
-import json
 from litellm import completion
-from typing import Optional, Type, TypeVar
+from typing import Type, TypeVar, Optional
 from pydantic import BaseModel
 
 from text_to_json.schema_design import DomainStory
@@ -8,7 +7,14 @@ from text_to_json.schema_design import DomainStory
 T = TypeVar("T", bound=BaseModel)
 
 
-def api_response(model_name: str, messages: list[object], schema: Type[T] = None):
+def api_response(
+    model_name: str,
+    messages: list[object],
+    schema: Type[T] = None,
+    api_key: Optional[str] = None,
+    api_base: Optional[str] = None,
+    custom_llm_provider: Optional[str] = None,
+):
     kwargs = {
         "model": model_name,
         "messages": messages,
@@ -20,9 +26,21 @@ def api_response(model_name: str, messages: list[object], schema: Type[T] = None
     if schema is not None:
         kwargs["response_format"] = schema
 
+    if api_key:
+        kwargs["api_key"] = api_key
+
+    if api_base:
+        kwargs["api_base"] = api_base
+
+    if custom_llm_provider:
+        kwargs["custom_llm_provider"] = custom_llm_provider
+
     resp = completion(**kwargs)
     output = resp.choices[0].message.content
-    str_2_obj = DomainStory.model_validate_json(output)
+    if output is None:
+        raise ValueError(f"Model '{model_name}' returned no message content")
+    output_text: str = output
+    validated_domain_story = DomainStory.model_validate_json(output_text)
 
     usage = None
     if getattr(resp, "usage", None) is not None:
@@ -33,7 +51,7 @@ def api_response(model_name: str, messages: list[object], schema: Type[T] = None
         }
 
     return {
-        "output": str_2_obj,
+        "output": validated_domain_story,
         "token_usage": usage,
     }
 

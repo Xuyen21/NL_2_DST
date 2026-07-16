@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -24,8 +25,35 @@ litellm.drop_params = True
 class ApiCall:
     def __init__(self, prompt: str, options: dict[str, Any], context: dict[str, Any]):
         # prompt param is the top level prompt in yaml which is null, but promptfoo requires this param in this api call
-        self.model_name = options["config"]["model"]  # options.get("config", {}).get("model")
+        config = options.get("config", {})
+        self.model_name = config["model"]
+        self.provider_name = config.get("provider")
+        base_env_name = config.get("base")
+        self.api_base = os.environ.get(base_env_name) if base_env_name else None
+        api_key_env_name = config.get("api_key_env")
+        resolved_api_key_env_name = api_key_env_name or self.resolve_api_key_env_name(self.provider_name)
+        self.api_key = os.environ.get(resolved_api_key_env_name) if resolved_api_key_env_name else None
         self.user_story = context["vars"]["input"]
+
+    @staticmethod
+    def resolve_custom_llm_provider(provider_name: str | None) -> str | None:
+        if provider_name == "qwen-compatible":
+            return "openai"
+        return provider_name
+
+    @staticmethod
+    def resolve_api_key_env_name(provider_name: str | None) -> str | None:
+        provider_to_key_env = {
+            "qwen-compatible": "DASHSCOPE_API_KEY",
+            "gemini": "GEMINI_API_KEY",
+            "anthropic": "ANTHROPIC_API_KEY",
+            "openrouter": "OPENROUTER_API_KEY",
+            "openai": "OPENAI_API_KEY",
+            "mistral": "MISTRAL_API_KEY",
+            "xai": "XAI_API_KEY",
+            "deepseek": "DEEPSEEK_API_KEY",
+        }
+        return provider_to_key_env.get(provider_name)
 
     @staticmethod
     def create_messages(user_prompt: str) -> list:
@@ -55,7 +83,14 @@ class ApiCall:
         #     response_format=DomainStory
         # )
         try:
-            resp = api_response(model_name=self.model_name, messages=messages, schema=DomainStory)
+            resp = api_response(
+                model_name=self.model_name,
+                messages=messages,
+                schema=DomainStory,
+                api_key=self.api_key,
+                api_base=self.api_base,
+                custom_llm_provider=self.resolve_custom_llm_provider(self.provider_name),
+            )
 
             # output = resp.choices[0].message.content
             update_icons = search_icons(resp['output'])
@@ -120,5 +155,6 @@ def one_phase_zeroshot(prompt: str, options: dict[str, Any], context: dict[str, 
 
 # One phase prompting
 one_phase_zeroshot_gpt = one_phase_zeroshot
-one_phase_zeroshot_claude = one_phase_zeroshot_gpt
-one_phase_zeroshot_gemini = one_phase_zeroshot
+one_phase_zeroshot_qwen = one_phase_zeroshot
+one_phase_zeroshot_glm = one_phase_zeroshot
+one_phase_zeroshot_deepseek = one_phase_zeroshot

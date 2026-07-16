@@ -1,6 +1,59 @@
+import re
+from pathlib import Path
 from statistics import median
 
 from verification import load_json
+
+
+REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-qwenmax.json"
+PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo-eval" / "promptfooconfig.yaml"
+
+
+def load_promptfoo_providers(config_path: Path) -> list[dict[str, str]]:
+    providers: list[dict[str, str]] = []
+    current_provider: dict[str, str] | None = None
+    inside_providers = False
+
+    for raw_line in config_path.read_text(encoding="utf-8").splitlines():
+        stripped_line = raw_line.strip()
+
+        if not stripped_line or stripped_line.startswith("#"):
+            continue
+
+        if stripped_line == "providers:":
+            inside_providers = True
+            continue
+
+        if inside_providers and not raw_line.startswith("  "):
+            break
+
+        if not inside_providers:
+            continue
+
+        if raw_line.startswith("  - id: "):
+            if current_provider and current_provider.get("id") and current_provider.get("label"):
+                providers.append(current_provider)
+            current_provider = {"id": raw_line.split(": ", 1)[1].strip()}
+            continue
+
+        if current_provider and raw_line.startswith("      label: "):
+            current_provider["label"] = raw_line.split(": ", 1)[1].strip()
+
+    if current_provider and current_provider.get("id") and current_provider.get("label"):
+        providers.append(current_provider)
+
+    return providers
+
+
+def format_provider_name(label: str) -> str:
+    first_token = label.split()[0]
+    match = re.match(r"[A-Za-z]+", first_token)
+    base_name = match.group(0) if match else first_token
+
+    if base_name.upper() in {"GPT", "GLM"}:
+        return base_name.upper()
+
+    return base_name.capitalize()
 
 
 class CalculateFinalMetrics:
@@ -8,23 +61,26 @@ class CalculateFinalMetrics:
         self.report = report
         self.individual_model = provider_id
 
-    def get_model_pass_rate(self):
-        total_fields = 0
-        correct_fields = 0
-
+    def _iter_provider_results(self):
         for result in self.report:
             provider = result.get("provider", {})
-            if provider.get("id") != self.individual_model:
-                continue
+            if provider.get("id") == self.individual_model:
+                yield result
 
+    def _iter_component_results(self):
+        for result in self._iter_provider_results():
             component_results = result.get("gradingResult", {}).get(
                 "componentResults", []
             )
 
-            if not component_results:
-                continue
+            if component_results:
+                yield component_results[0]
 
-            component = component_results[0]
+    def get_model_pass_rate(self):
+        total_fields = 0
+        correct_fields = 0
+
+        for component in self._iter_component_results():
             total_fields += component.get("total_fields", 0)
             correct_fields += component.get("correct_fields", 0)
 
@@ -56,19 +112,7 @@ class CalculateFinalMetrics:
         work_corrects = work_missings = work_hallu = 0
         activities_corrects = activities_missings = activities_hallu = 0
 
-        for result in self.report:
-            provider = result.get("provider", {})
-            if provider.get("id") != self.individual_model:
-                continue
-
-            component_results = result.get("gradingResult", {}).get(
-                "componentResults", []
-            )
-            if not component_results:
-                continue
-
-            component = component_results[0]
-
+        for component in self._iter_component_results():
             actors = component.get("actors_result", {})
             actors_corrects += actors.get("corrects", 0)
             actors_missings += actors.get("missings", 0)
@@ -93,18 +137,7 @@ class CalculateFinalMetrics:
         }
 
     def get_model_p50_latency(self):
-        latencies = []
-
-        for result in self.report:
-            provider = result.get("provider", {})
-            if provider.get("id") != self.individual_model:
-                continue
-
-            latency_ms = result.get("latencyMs")
-            if latency_ms is None:
-                continue
-
-            latencies.append(latency_ms)
+        latencies = self.get_model_latencies()
 
         p50_latency_seconds = round(median(latencies) / 1000, 2) if latencies else 0
 
@@ -113,54 +146,45 @@ class CalculateFinalMetrics:
             "p50_latency_seconds": p50_latency_seconds,
         }
 
+    def get_model_latencies(self) -> list[int]:
+        latencies = []
+
+        for result in self._iter_provider_results():
+            latency_ms = result.get("latencyMs")
+            if latency_ms is not None:
+                latencies.append(latency_ms)
+
+        return sorted(latencies)
+
 
 if __name__ == "__main__":
-    report_path = r"C:\code\NL_2_DST\evaluations\results-zero-shot-qwenmax.json"
-    report = load_json(report_path)
+    report = load_json(REPORT_PATH)
     results_list = report["results"]["results"]
+    provider_configs = load_promptfoo_providers(PROMPTFOO_CONFIG_PATH)
 
-    gpt_id = "file://provider_requests.py:one_phase_zeroshot_gpt"
-    claude_id = "file://provider_requests.py:one_phase_zeroshot_claude"
-    gemini_id = "file://provider_requests.py:one_phase_zeroshot_gemini"
+    metrics_by_provider = []
+    for provider_config in provider_configs:
+        display_name = format_provider_name(provider_config["label"])
+        metrics_by_provider.append(
+            {
+                "name": display_name,
+                "label": provider_config["label"],
+                "metrics": CalculateFinalMetrics(results_list, provider_config["id"]),
+            }
+        )
 
-    gpt_metrics = CalculateFinalMetrics(results_list, gpt_id)
-    claude_metrics = CalculateFinalMetrics(results_list, claude_id)
-    gemini_metrics = CalculateFinalMetrics(results_list, gemini_id)
-
-    gpt_final_results = gpt_metrics.get_model_pass_rate()
-    gemini_final_results = gemini_metrics.get_model_pass_rate()
-    claude_final_results = claude_metrics.get_model_pass_rate()
-
-    print("GPT Final Results:", gpt_final_results)
-    print("GEMINI Final Results:", gemini_final_results)
-    print("Claude Final Results:", claude_final_results)
+    for provider in metrics_by_provider:
+        print(f"{provider['name']} Final Results:", provider["metrics"].get_model_pass_rate())
     print("------------------------------")
 
-    gpt_f1_scores = gpt_metrics.get_model_F1_scores()
-    gemini_f1_scores = gemini_metrics.get_model_F1_scores()
-    claude_f1_scores = claude_metrics.get_model_F1_scores()
-
-    print("GPT F1 Scores:", gpt_f1_scores)
-    print("GEMINI F1 Scores:", gemini_f1_scores)
-    print("Claude F1 Scores:", claude_f1_scores)
+    for provider in metrics_by_provider:
+        print(f"{provider['name']} F1 Scores:", provider["metrics"].get_model_F1_scores())
     print("------------------------------")
 
-    gpt_p50_latency = gpt_metrics.get_model_p50_latency()
-    gemini_p50_latency = gemini_metrics.get_model_p50_latency()
-    claude_p50_latency = claude_metrics.get_model_p50_latency()
+    for provider in metrics_by_provider:
+        model_metrics = provider["metrics"]
+        latencies = model_metrics.get_model_latencies()
 
-    print("GPT P50 Latency:", gpt_p50_latency)
-    print("GEMINI P50 Latency:", gemini_p50_latency)
-    print("Claude P50 Latency:", claude_p50_latency)
-
-    gemini_id = "file://provider_requests.py:one_phase_zeroshot_gemini"
-
-    gemini_latencies = sorted(
-        result["latencyMs"]
-        for result in results_list
-        if result.get("provider", {}).get("id") == gemini_id
-        and result.get("latencyMs") is not None
-    )
-
-    print("Gemini latencies (ms):", gemini_latencies)
-    print("Gemini latencies (s):", [round(ms / 1000, 2) for ms in gemini_latencies])
+        print(f"{provider['name']} P50 Latency:", model_metrics.get_model_p50_latency())
+        print(f"{provider['name']} latencies (ms):", latencies)
+        print(f"{provider['name']} latencies (s):", [round(ms / 1000, 2) for ms in latencies])
