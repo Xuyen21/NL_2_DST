@@ -5,7 +5,7 @@ from statistics import median
 from verification import load_json
 
 
-REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-qwenmax.json"
+REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-CoT-v0-1-1.json"
 PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo-eval" / "promptfooconfig.yaml"
 
 
@@ -69,9 +69,10 @@ class CalculateFinalMetrics:
 
     def _iter_component_results(self):
         for result in self._iter_provider_results():
-            component_results = result.get("gradingResult", {}).get(
-                "componentResults", []
-            )
+            grading_result = result.get("gradingResult")
+            if grading_result is None:
+                continue
+            component_results = grading_result.get("componentResults", [])
 
             if component_results:
                 yield component_results[0]

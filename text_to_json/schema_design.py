@@ -42,11 +42,11 @@ class WorkObjectInstance(BaseModel):
     note: str | None = Field(
         default=None,
         description=(
-            "Strictly for multi-word temporal clauses, conditional states, or explicit user notes. "
-            "Extract explicit notes (e.g., text in parentheses) AND orphaned temporal/conditional phrases "
+            "Use only for multi-word temporal clauses, conditional states, or explicit user notes. "
+            "Include text that appears in parentheses and orphaned temporal or conditional phrases "
             "(e.g., 'after the leasing period', 'in the event of failure', 'if approved'). "
-            "CRITICAL: Do NOT extract standard adjectives (e.g., 'specific', 'new') or single-word adverbs (e.g., 'regularly', 'automatically', 'quickly'). "
-            "These minor descriptive words must be completely ignored. If there is no multi-word temporal/conditional phrase or explicit note, leave null."
+            "Exclude single adjectives (e.g., 'specific', 'new') and single-word adverbs (e.g., 'regularly', 'automatically'). "
+            "If no qualifying phrase or explicit note is present, set this to null."
         ),
     )
 
@@ -93,28 +93,28 @@ class MainActivity(BaseModel):
     )
     object_id: str = Field(
         description=(
-            "The ID of the work object that being exchange.  "
-            "This value must exactly match one existing WorkObjectInstance.instance_id "
-            "in the work_objects_instances list. DON'T event new ID."
+            "The ID of the work object being exchanged. "
+            "This value must exactly match an existing WorkObjectInstance.instance_id "
+            "from the work_objects list. Never invent a new ID."
         )
     )
     relation: str | None = Field(
         default=None,
         description=(
             "The pure edge label connecting the primary object to a secondary target. "
-            "CRITICAL GRAPH CHAINING RULE: If there is a chain of multiple nested work objects "
+            "Graph chaining rule: when there is a chain of multiple nested work objects "
             "(e.g., 'contract for a car with an installment') going to a final receiving actor ('to the customer'), "
-            "DO NOT put the routing relation (e.g., 'to') here. Leave this null and push it to the final SubActivity."
+            "leave this null and push the routing relation (e.g., 'to') to the final SubActivity instead."
         ),
 
     )
     target_id: str | None = Field(
         default=None,
         description=(
-            "(Optional) The ID of secondary actor or another work object instance. "
-            "CRITICAL GRAPH CHAINING RULE: If the sentence specifies a final receiving actor (e.g., 'customer'), "
-            "but there is a chain of multiple work objects modifying the primary object, you MUST NOT attach the receiving actor here. "
-            "Leave this target_id null, and defer the receiving actor so they become the target_id of the very last SubActivity in the chain."
+            "(Optional) The ID of a secondary actor or another work object instance. "
+            "Graph chaining rule: when the sentence specifies a final receiving actor (e.g., 'customer') "
+            "but a chain of multiple work objects modifies the primary object, do not attach the receiving actor here. "
+            "Leave target_id null and defer the receiving actor to the target_id of the very last SubActivity in the chain."
         ),
     )
 
@@ -126,9 +126,9 @@ class SubActivity(BaseModel):
     subject_id: str = Field(
         description=(
             "The ID of the entity that this continuation branches from. "
-            "CRITICAL STRICT CHAINING RULE: You must form a continuous, single-path linear chain. "
-            "If line_order is 2, this MUST exactly match the object_id (or target_id) of the MainActivity. "
-            "If line_order is > 2, this MUST exactly match the target_id of the IMMEDIATELY PRECEDING SubActivity (line_order - 1). "
+            "Strict chaining rule: form a continuous, single-path linear chain. "
+            "If line_order is 2, this must exactly match the object_id (or target_id) of the MainActivity. "
+            "If line_order is > 2, this must exactly match the target_id of the immediately preceding SubActivity (line_order - 1). "
             "Never branch back to earlier objects in the chain. For example, if line 3 targets 'contract', line 4's subject must be 'contract'."
         )
     )

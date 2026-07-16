@@ -1,7 +1,7 @@
 {
   "scripts": {
     "eval": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml",
-    "evaljson": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output evaluations/results-zero-shot-qwenmax.json",
+    "evaljson": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output evaluations/results-zero-shot-CoT-v0-1-1.json",
     "evalcsv": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output result_1.csv",
     "evalhtml": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output result_1.html",
     "evaljsonl": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output result_1.jsonl",

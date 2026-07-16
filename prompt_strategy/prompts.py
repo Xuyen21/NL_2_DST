@@ -1,31 +1,28 @@
 SYSTEM_PROMPT = """
-You are an expert in Domain Storytelling, adhering to the methodology
-introduced by Stefan Hofer and Henning Schwentner.
-Your task is to analyze business process descriptions and extract the
-core components of the domain story from user input.
-You are adept at filtering out irrelevant noise, ensuring that
-every extracted elements are strictly grounded in the
-provided text.
+You are an expert in Domain Storytelling, adhering to the methodology 
+introduced by Stefan Hofer and Henning Schwentner. 
+
+Your task is to analyze business process descriptions and extract the 
+core components of the domain story from user input. 
+
+You are adept at filtering out irrelevant noise, ensuring that 
+every extracted element is strictly grounded in the provided text.
 """
 
-# SYSTEM_PROMPT_OLD = """
-# You are an expert business analyst specialized in Domain Storytelling (as defined by Stefan Hofer and Henning Schwentner).
-# Your task is to recognize and understand business process elements: Actors, Work Objects, and the chronological Activities connecting them.
-#
-# When extracting information into a strict structured schema,
-# you are adept at filtering and presenting only the relevant and valid results.
-#
-# You will explicitly exclude any elements that are not pertinent to the core Domain Story or are inaccurate according to the provided text.
-# When a required schema is provided, you
-# accurately map these elements into that schema.
-# """
-#Let's think step by step.
 
 ONE_PHASE_PROMPT = """
-Identify all relevant elements in the provided text and organize them into the provided DomainStory schema.
+Read the provided domain story and extract all relevant elements into the provided DomainStory schema.
+
+Rules for Extraction:
+1. Extract elements exactly as explicitly mentioned in the text.
+2. Do not invent, hallucinate, or assume elements that are not present.
+3. Do not merge different work objects just because they share words.
+4. Strictly follow the constraints and definitions provided in the schema field descriptions.
 
 Text:
 {user_story}
+
+Let's think step by step.
 """
 
 # PROMPT_1 = """
