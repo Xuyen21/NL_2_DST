@@ -1,24 +1,42 @@
 import json
+import re
+from typing import Any
 from pathlib import Path
 
 from pyarrow import null
 
 ACTOR_STYLE = '$color="DarkGreen", $scale=1.5'
+JsonDict = dict[str, Any]
 
 
-def init_actors(actors: list[object]):
+def sanitize_identifier(value: object, *, fallback_prefix: str = "id") -> str:
+    text = str(value).strip()
+    sanitized = re.sub(r"[^A-Za-z0-9_]", "_", text)
+    sanitized = re.sub(r"_+", "_", sanitized).strip("_")
+
+    if not sanitized:
+        sanitized = fallback_prefix
+
+    if sanitized[0].isdigit():
+        sanitized = f"{fallback_prefix}_{sanitized}"
+
+    return sanitized
+
+
+def init_actors(actors: list[JsonDict]):
     actors_list = []
     for actor in actors:
         note = actor["note"] if actor["note"] else ""
-        init_actor = f'{actor["type"]}({actor["id"]},{actor["name"]},{ACTOR_STYLE}, $note="{note}")'
+        actor_id = sanitize_identifier(actor["id"], fallback_prefix="actor")
+        init_actor = f'{actor["type"]}({actor_id},{actor["name"]},{ACTOR_STYLE}, $note="{note}")'
         actors_list.append(init_actor)
     return actors_list
 
 
-def init_sprites(work_objects: list[object]):
+def init_sprites(work_objects: list[JsonDict]):
     sprites_list = []
     for work_object in work_objects:
-        procedure_name = work_object["id"]
+        procedure_name = sanitize_identifier(work_object["id"], fallback_prefix="work_object")
         mdi_name = work_object["icon"]["mdi_name"]
         svg = work_object["icon"]["svg"]
         sprite = f"""
@@ -40,24 +58,25 @@ def init_sprites(work_objects: list[object]):
 #
 
 
-def init_work_objects(work_obj_instances: list[object]):
+def init_work_objects(work_obj_instances: list[JsonDict]):
     work_obj_instance_list = []
 
     for work_obj_instance in work_obj_instances:
-        id = work_obj_instance['work_object_id']
+        work_object_id = sanitize_identifier(work_obj_instance['work_object_id'], fallback_prefix="work_object")
+        instance_id = sanitize_identifier(work_obj_instance['instance_id'], fallback_prefix=work_object_id)
         # the name is same as id, but writen with a space, instead of underscore
-        label = id.replace("_", " ")
+        label = str(work_obj_instance['work_object_id']).replace("_", " ")
         note = work_obj_instance['note']
 
         if note is None:
-            init_work_obj = f"""{id}({work_obj_instance['instance_id']}, {label})"""
+            init_work_obj = f"""{work_object_id}({instance_id}, {label})"""
         else:
-            init_work_obj = f"""{id}({work_obj_instance['instance_id']}, {label}, $note="{note}")"""
+            init_work_obj = f"""{work_object_id}({instance_id}, {label}, $note="{note}")"""
         work_obj_instance_list.append(init_work_obj)
     return work_obj_instance_list
 
 
-def init_activities(activities: list[object]):
+def init_activities(activities: list[JsonDict]):
     activities_list = []
     for activity in activities:
         # within the same step, only assign step number for the first activities. For substep, use empty string
@@ -66,18 +85,22 @@ def init_activities(activities: list[object]):
         main_activity = activity['main_activity']
         # preposition and target_id can be null
         relation = f'{main_activity['relation']}' if main_activity['relation'] is not None else ''
-        target_id = f'{main_activity['target_id']}' if main_activity['target_id'] is not None else ''
+        target_id = sanitize_identifier(main_activity['target_id'], fallback_prefix="target") if main_activity['target_id'] is not None else ''
+        subject_id = sanitize_identifier(main_activity['subject_id'], fallback_prefix="subject")
+        object_id = sanitize_identifier(main_activity['object_id'], fallback_prefix="object")
 
         # final syntax
-        action = (f"{order}, {main_activity['subject_id']}, {main_activity['action']},"
-                  f" {main_activity['object_id']}, {relation}, {target_id})")
+        action = (f"{order}, {subject_id}, {main_activity['action']},"
+                  f" {object_id}, {relation}, {target_id})")
 
         activities_list.append(action)
         sub_activities = activity['sub_activities']
 
         if sub_activities:
             for sub_act in sub_activities:
-                sub_action = f"activity( , {sub_act['subject_id']}, {sub_act['relation']}, {sub_act['target_id']})"
+                sub_subject_id = sanitize_identifier(sub_act['subject_id'], fallback_prefix="subject")
+                sub_target_id = sanitize_identifier(sub_act['target_id'], fallback_prefix="target")
+                sub_action = f"activity( , {sub_subject_id}, {sub_act['relation']}, {sub_target_id})"
 
                 activities_list.append(sub_action)
 
