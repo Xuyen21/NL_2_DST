@@ -70,8 +70,10 @@ class ActivitiesStats(Stats):
     def __init__(self):
         super().__init__()
         self._init_fields(
+            self.STEP_FIELD,
             self.MAIN_ACTIVITY_FIELD,
             self.SUB_ACTIVITIES_FIELD,
+
         )
 
     @property
@@ -88,4 +90,20 @@ class ActivitiesStats(Stats):
 
 
 class ActorsStats(Stats):
-    pass
+    NAME_FIELD = "name"
+    TYPE_FIELD = "type"
+
+    def __init__(self):
+        super().__init__()
+        self._init_fields(
+            self.NAME_FIELD,
+            self.TYPE_FIELD,
+        )
+
+    @property
+    def names(self) -> StatsItem:
+        return self._get_field(self.NAME_FIELD)
+
+    @property
+    def types(self) -> StatsItem:
+        return self._get_field(self.TYPE_FIELD)

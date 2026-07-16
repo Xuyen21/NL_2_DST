@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import List, Optional
-
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -10,7 +9,6 @@ class ActorType(str, Enum):
     SYSTEM = "System"
 
 
-# --- 1. Define the Schema ---
 class Actor(BaseModel):
     id: str = Field(
         description="Unique identifier for the actor, usually the same as the name."
@@ -21,16 +19,10 @@ class Actor(BaseModel):
     type: ActorType = Field(
         description="The type of actor: Person, Group of Persons, or System."
     )
-
-
-# class WorkObjectType(str, Enum):
-#     CALL = "Call"
-#     INFO = "Info"
-#     FOLDER = "Folder"
-#     CONVERSATION = "Conversation"
-#     DOCUMENT = "Document"
-#     EMAIL = "Email"
-#     OTHER = "Other"
+    note: Optional[str] = Field(
+        default=None,
+        description="Optional note about the actor, extracted only when the input explicitly includes a note label or text in parentheses."
+    )
 
 
 class Icon(BaseModel):
@@ -57,17 +49,11 @@ class WorkObjectInstance(BaseModel):
             "These minor descriptive words must be completely ignored. If there is no multi-word temporal/conditional phrase or explicit note, leave null."
         ),
     )
-    # work_object_id: str = Field(
-    #     description=(
-    #         "The ID of the canonical work object that this instance refers to. "
-    #         "This value must exactly match one existing WorkObject.id in the work_objects list. DON'T event new ID."
-    #     )
-    # )
 
 
 class WorkObject(BaseModel):
     id: str = Field(
-        description="Unique identifier for the work object, usually the same as the name but connected words using underscores."
+        description="Unique identifier for the work object,the same as the name but connected words using underscores."
     )
 
     name: str = Field(
@@ -77,37 +63,14 @@ class WorkObject(BaseModel):
             "Do not extract nouns if they are functioning as modifiers, bridges, temporal phases (e.g., 'leasing period', 'shift'), "
             "or conditions trapped inside prepositional phrases (e.g., 'after...', 'during...', 'based on...')."
         )
-        # description=(
-        #     "The concrete name of the work object; the 'what' that is acted upon, exchanged, or used. "
-        #     "Grammatical constraint: Only extract nouns that act as the direct receiver (direct object) of the main activity verb. "
-        #     "Do not extract abstract nouns if they are functioning as modifiers, bridges, or are trapped inside prepositional phrases describing the flow between two other objects."
-        # )
     )
-    # type: #str = Field(
-    #     description=(
-    #         "The most suitable generic type label for the work object. "
-    #         "First prefer one of these predefined PlantUML macro types when they clearly fit the object itself: "
-    #         "Call, Conversation, Document, Email, Info. "
-    #         "Use Info only for a general informational item, notice, or reference information represented by the info icon. "
-    #         "If none of the predefined macro types fits well, return a short generic noun phrase such as vehicle, payment, result, decision, form, or catalog."
-    #     )
-    # )
+
     description: str = Field(
-        description=("A short, generic, concept-based description of the work object for semantic matching. ")
-        #              "For example, if the text is 'credit assessment', then the description must be about the assessment of credit, not only about the credit itself. Prioritize the core concept in the description"
-        #              )
-        # description=(
-        #     "A minimalist, generic noun phrase (1-4 words) capturing only the core conceptual essence of the work object for semantic icon search. "
-        #     "CRITICAL: Strip away all context, actors, conditions, and domain-specific details. Do not explain the object. "
-        #     "For example, if the object is 'credit assessment', return 'assessment'. If 'credit rating report' then 'report'"
-        # )
-        # description=(
-        #     "A minimalist, generic noun phrase (1-4 words) capturing only the core conceptual essence of the work object for semantic icon search. "
-        #     "CRITICAL: Strip away all story context, actors, and relationships. Do not explain what the object is 'for' or who it belongs to. "
-        #     "For example, if the text is 'credit assessment', return exactly 'assessment'. "
-        #     "If the text is 'the risk being assessed for a contract', return exactly 'risk assessment' or 'evaluation'. "
-        #     "Never include secondary objects like 'contract' or 'customer' in this string, or it will ruin the semantic icon search."
-        # )
+        description=(
+            "A short, generic concept phrase (ideally from 1-6 words) describing what the work object is about for semantic icon search. The description for Icon used in Car leasing domain"
+            "Focus only on the core object itself, not the story context, actors, actions, or relations. "
+            "Keep it concise and concept-based."
+        )
     )
 
     instances: list[WorkObjectInstance] = Field(
@@ -118,14 +81,10 @@ class WorkObject(BaseModel):
 
 
 class MainActivity(BaseModel):
-    # line_order: int = Field(
-    #     description="Always 1 for the first PlantUML activity line of the story step."
-    # )
     subject_id: str = Field(
         description="Primary actor or system of the first activity line."
     )
     action: str = Field(
-        # description="Predicate of the first activity line."
         description=(
             "Predicate of the first activity line. "
             "If the verb relies on a preposition to connect to the work object "
@@ -147,13 +106,7 @@ class MainActivity(BaseModel):
             "(e.g., 'contract for a car with an installment') going to a final receiving actor ('to the customer'), "
             "DO NOT put the routing relation (e.g., 'to') here. Leave this null and push it to the final SubActivity."
         ),
-        # description=(
-        #     "Optional contextual phrase connecting the primary object to a secondary target. "
-        #     "If abstract words like 'information' or 'data' are part of a prepositional modifier "
-        #     "(e.g., 'with information from'), include them here. "
-        #     "However, if those words are the direct object of the main action (e.g., 'extracts data'), "
-        #     "they belong in object_id, and this field should only be the remaining connection (e.g., 'from')."
-        # )
+
     )
     target_id: str | None = Field(
         default=None,
@@ -163,9 +116,6 @@ class MainActivity(BaseModel):
             "but there is a chain of multiple work objects modifying the primary object, you MUST NOT attach the receiving actor here. "
             "Leave this target_id null, and defer the receiving actor so they become the target_id of the very last SubActivity in the chain."
         ),
-        # description=(
-        #     "(Optional) The ID of secondary actor or another work object instance that is connected to the main object through the relation. "
-        # )
     )
 
 
@@ -174,11 +124,6 @@ class SubActivity(BaseModel):
         description="Order of the continuation line within the same step, starting at 2."
     )
     subject_id: str = Field(
-        # description=(
-        #     "The ID of the entity that this continuation branches from. "
-        #     "CRITICAL: This can be the object_id or target_id from the MainActivity, OR the target_id of a previous SubActivity. "
-        #     "It must be a Work Object, not an Actor."
-        # )
         description=(
             "The ID of the entity that this continuation branches from. "
             "CRITICAL STRICT CHAINING RULE: You must form a continuous, single-path linear chain. "
@@ -197,12 +142,8 @@ class SubActivity(BaseModel):
     target_id: str = Field(
         description=(
             "The ID of the secondary actor or another work object instance that receives this continuation. "
-            "For example, if the chain is 'car' -> 'with' -> 'monthly_installment', this field is 'monthly_installment'."
+            # "For example, if the chain is 'car' -> 'with' -> 'monthly_installment', this field is 'monthly_installment'."
         )
-        # description=(
-        #     "(Optional) The ID of secondary actor or another work object instance that is connected to the main object through the relation. "
-        # )
-        # description="The target of the continuation line."
     )
 
 
@@ -219,14 +160,10 @@ class DomainStory(BaseModel):
     )
     actors: List[Actor]
     work_objects: List[WorkObject]
-    # work_object_instances: List[WorkObjectInstance] = Field(default_factory=list)
     activities: List[Activity] = Field(default_factory=list)
 
 
 class DomainStory_Fewshot_CoT(BaseModel):
-    reasoning: str = Field(
-        description="Step-by-step logic explaining the mapping from the user's input."
-    )
     user_input: Optional[str] = Field(
         None,
         description="Leave this field blank/null. It is only for reference in examples.",

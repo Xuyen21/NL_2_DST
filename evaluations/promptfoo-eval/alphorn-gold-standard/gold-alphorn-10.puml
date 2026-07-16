@@ -1,0 +1,54 @@
+@startuml
+!include <domainstory/Domainstory>
+title <size:24><b>Unpaid installment tracking and risk price table preparation</b></size>
+Person(accountant,accountant,$color="DarkGreen", $scale=1.5)
+Person(risk_manager,risk manager,$color="DarkGreen", $scale=1.5)
+System(risk_price_table_xls,risk price table xls,$color="DarkGreen", $scale=1.5)
+
+                sprite mdiInvoiceClock <svg width="48" height="48"><g transform="scale(2)"><path d="M15 13V16.69L18.19 18.53L18.94 17.23L16.5 15.82V13H15M9 22L10.87 20.76C12.14 22.14 13.97 23 16 23C19.87 23 23 19.87 23 16C23 14.09 22.24 12.36 21 11.1V3H3V22L6 20L9 22M16 21C13.24 21 11 18.76 11 16C11 13.24 13.24 11 16 11C18.76 11 21 13.24 21 16C21 18.76 18.76 21 16 21Z" /></g></svg>
+
+                !unquoted procedure unpaid_installment($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiInvoiceClock", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+
+                sprite mdiGoogleSpreadsheet <svg width="48" height="48"><g transform="scale(2)"><path d="M19,11V9H11V5H9V9H5V11H9V19H11V11H19M19,3C19.5,3 20,3.2 20.39,3.61C20.8,4 21,4.5 21,5V19C21,19.5 20.8,20 20.39,20.39C20,20.8 19.5,21 19,21H5C4.5,21 4,20.8 3.61,20.39C3.2,20 3,19.5 3,19V5C3,4.5 3.2,4 3.61,3.61C4,3.2 4.5,3 5,3H19Z" /></g></svg>
+
+                !unquoted procedure missing_payments_tracking_xls($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiGoogleSpreadsheet", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+
+                sprite mdiReceiptText <svg width="48" height="48"><g transform="scale(2)"><path d="M3,22L4.5,20.5L6,22L7.5,20.5L9,22L10.5,20.5L12,22L13.5,20.5L15,22L16.5,20.5L18,22L19.5,20.5L21,22V2L19.5,3.5L18,2L16.5,3.5L15,2L13.5,3.5L12,2L10.5,3.5L9,2L7.5,3.5L6,2L4.5,3.5L3,2M18,9H6V7H18M18,13H6V11H18M18,17H6V15H18V17Z" /></g></svg>
+
+                !unquoted procedure data($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiReceiptText", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+
+                sprite mdiPaperRoll <svg width="48" height="48"><g transform="scale(2)"><path d="M9 3C5.69 3 3.14 5.69 3 9V21H12V13.46C13.1 14.45 14.5 15 16 15C19.31 15 22 12.31 22 9C22 5.69 19.31 3 16 3H9M16 5C18.21 5 20 6.79 20 9C20 11.21 18.21 13 16 13C13.79 13 12 11.21 12 9C12 6.79 13.79 5 16 5M16 7.25C15.03 7.25 14.25 8.03 14.25 9C14.25 9.97 15.03 10.75 16 10.75C16.97 10.75 17.75 9.97 17.75 9C17.75 8.03 16.97 7.25 16 7.25M4 12H5V13H4V12M6 12H7V13H6V12M8 12H9V13H8V12M10 12H11V13H10V12Z" /></g></svg>
+
+                !unquoted procedure paper_version($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiPaperRoll", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+unpaid_installment(unpaid_installment_1, unpaid installment)
+unpaid_installment(unpaid_installment_2, unpaid installment)
+missing_payments_tracking_xls(missing_payments_tracking_xls_1, missing payments tracking xls)
+missing_payments_tracking_xls(missing_payments_tracking_xls_2, missing payments tracking xls)
+data(data_1, data)
+paper_version(paper_version_1, paper version, $note="used for the voting of the new contracts on a monthly basis")
+activity(1, accountant, informs about, unpaid_installment_1, to, risk_manager)
+activity(2, risk_manager, enters, unpaid_installment_2, into, missing_payments_tracking_xls_1)
+activity(3, risk_price_table_xls, extracts, data_1, from, missing_payments_tracking_xls_2)
+activity(4, risk_manager, prints out, paper_version_1, , )
+activity( , paper_version_1, of, risk_price_table_xls)
+@enduml

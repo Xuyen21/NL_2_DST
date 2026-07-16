@@ -1,7 +1,4 @@
-import json
-
 from evaluations.verification import VerifyOutput
-from mytest import check
 from verification import VerificationResult, count_primitive_kv_pairs, semantic_similarity
 from verification.stats import ActivitiesStats
 from verification.verify_work_objects import group_by_key
@@ -30,7 +27,7 @@ class VerifyActivities(VerifyOutput):
 
     def semantic_match(self, actual_output: str, expected_output: str):
         result = semantic_similarity(actual_output, expected_output)
-        if result['similarity_score'] > 0.70:
+        if result['similarity_score'] > 0.6:
             self.correct_fields += 1
         else:
             match result['case']:

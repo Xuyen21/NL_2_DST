@@ -1,0 +1,45 @@
+@startuml
+!include <domainstory/Domainstory>
+title <size:24><b>Monthly installment payment and booking</b></size>
+Person(customer,customer,$color="DarkGreen", $scale=1.5)
+Person(accountant,accountant,$color="DarkGreen", $scale=1.5)
+System(bank,bank,$color="DarkGreen", $scale=1.5)
+
+                sprite mdiCashSync <svg width="48" height="48"><g transform="scale(2)"><path d="M3 6V18H13.32C13.1 17.33 13 16.66 13 16H7C7 14.9 6.11 14 5 14V10C6.11 10 7 9.11 7 8H17C17 9.11 17.9 10 19 10V10.06C19.67 10.06 20.34 10.18 21 10.4V6H3M12 9C10.3 9.03 9 10.3 9 12S10.3 14.94 12 15C12.38 15 12.77 14.92 13.14 14.77C13.41 13.67 13.86 12.63 14.97 11.61C14.85 10.28 13.59 8.97 12 9M19 11L21.25 13.25L19 15.5V14C17.15 14 15.94 15.96 16.76 17.62L15.67 18.71C13.91 16.05 15.81 12.5 19 12.5V11M19 22L16.75 19.75L19 17.5V19C20.85 19 22.06 17.04 21.24 15.38L22.33 14.29C24.09 16.95 22.19 20.5 19 20.5V22" /></g></svg>
+
+                !unquoted procedure monthly_installment($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiCashSync", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+
+                sprite mdiBank <svg width="48" height="48"><g transform="scale(2)"><path d="M11.5,1L2,6V8H21V6M16,10V17H19V10M2,22H21V19H2M10,10V17H13V10M4,10V17H7V10H4Z" /></g></svg>
+
+                !unquoted procedure bank_account($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiBank", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+
+                sprite mdiBookAccount <svg width="48" height="48"><g transform="scale(2)"><path d="M18 2H12V9L9.5 7.5L7 9V2H6A2 2 0 0 0 4 4V20A2 2 0 0 0 6 22H18A2 2 0 0 0 20 20V4A2 2 0 0 0 18 2M14 12A2 2 0 1 1 12 14A2 2 0 0 1 14 12M18 20H10V19C10 17.67 12.67 17 14 17S18 17.67 18 19Z" /></g></svg>
+
+                !unquoted procedure accounting_books($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")
+
+                  Object($name, "$mdiBookAccount", $name, $label, $tag, $note, $shape, $scale, $color, $background)
+
+                !endprocedure
+                
+monthly_installment(monthly_installment_1, monthly installment)
+monthly_installment(monthly_installment_2, monthly installment)
+monthly_installment(monthly_installment_3, monthly installment)
+bank_account(bank_account_1, bank account)
+bank_account(bank_account_2, bank account)
+accounting_books(accounting_books_1, accounting books)
+activity(1, customer, pays, monthly_installment_1, into, bank_account_1)
+activity( , bank_account_1, at, bank)
+activity(2, accountant, searches, monthly_installment_2, in, bank_account_2)
+activity( , bank_account_2, at, bank)
+activity(3, accountant, books, monthly_installment_3, into, accounting_books_1)
+@enduml

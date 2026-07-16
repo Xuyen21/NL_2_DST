@@ -4,53 +4,93 @@ description: view performance
 #evaluateOptions:
 #  maxConcurrency: 10
 
-#prompts:
-#  - file://prompt.txt
-
-# 1. Define how to aggregate the score across the test cases
-derivedMetrics:
-  - name: "Total Correct Pairs"
-    # Promptfoo averages 'pairs_score' across all test cases. 
-    # Since you have 3 test cases, multiplying by 3 gives you the total sum.
-    value: "pairs_score * 3"
-
 providers:
   - id: file://provider_requests.py:one_phase_zeroshot_gpt
     config:
-      model: gpt-4o
-      label: GPT-4o
-      temperature: 0
+      model: openrouter/qwen/qwen3.7-plus
+      label: qwen 3.7 Max
 #  - id: file://provider_requests.py:one_phase_zeroshot_gemini
 #    config:
-#      model: gemini/gemini-2.5-flash
-#      label: gemini/gemini-2.5-flash
-#      temperature: 0
-  - id: file://provider_requests.py:one_phase_zeroshot_gpt_mini
-    config:
-      model: gpt-4o-mini
-      label: GPT-4o-mini
-      temperature: 0
+#      model: gemini/gemini-3.5-flash #gemini/gemini-3.1-pro-preview gemini/gemini-2.5-pro
+#      label: Gemini 3 Pro
+#  #
+#  - id: file://provider_requests.py:one_phase_zeroshot_claude
+#    config:
+#      model: anthropic/claude-sonnet-4-6
+#      label: Claude Sonnet
+
+
 
 tests:
   - vars:
       input:
-        file://alphorn_text//alphorn-1-standardcase.txt
+        file://alphorn_text//alphorn-1.txt
       expected_output:
         file://alphorn-gold-standard//gold-alphorn-1.json
+
     assert: &grading_assert
       - type: python
         value: file://../scoring/grading.py:grading
 
   - vars:
       input:
-        file://alphorn_text//alphorn-2-riskassessment.txt
+        file://alphorn_text//alphorn-2.txt
       expected_output:
         file://alphorn-gold-standard//gold-alphorn-2.json
     assert: *grading_assert
 
   - vars:
       input:
-        file://alphorn_text//alphorn-3-riskassessment.txt
+        file://alphorn_text//alphorn-3.txt
       expected_output:
         file://alphorn-gold-standard//gold-alphorn-3.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-4.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-4.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-5.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-5.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-6.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-6.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-7.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-7.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-8.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-8.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-9.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-9.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-10.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-10.json
     assert: *grading_assert

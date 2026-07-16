@@ -1,0 +1,150 @@
+{
+  "title": "Unpaid installment tracking and risk price table preparation",
+  "actors": [
+    {
+      "id": "accountant",
+      "name": "accountant",
+      "type": "Person",
+      "note": null
+    },
+    {
+      "id": "risk_manager",
+      "name": "risk manager",
+      "type": "Person",
+      "note": null
+    },
+    {
+      "id": "risk_price_table_xls",
+      "name": "risk price table xls",
+      "type": "System",
+      "note": null
+    }
+  ],
+  "work_objects": [
+    {
+      "id": "unpaid_installment",
+      "name": "unpaid installment",
+      "description": "overdue payment installment",
+      "instances": [
+        {
+          "instance_id": "unpaid_installment_1",
+          "note": null
+        },
+        {
+          "instance_id": "unpaid_installment_2",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiInvoiceClock",
+        "svg": "M15 13V16.69L18.19 18.53L18.94 17.23L16.5 15.82V13H15M9 22L10.87 20.76C12.14 22.14 13.97 23 16 23C19.87 23 23 19.87 23 16C23 14.09 22.24 12.36 21 11.1V3H3V22L6 20L9 22M16 21C13.24 21 11 18.76 11 16C11 13.24 13.24 11 16 11C18.76 11 21 13.24 21 16C21 18.76 18.76 21 16 21Z"
+      }
+    },
+    {
+      "id": "missing_payments_tracking_xls",
+      "name": "missing payments tracking.xls",
+      "description": "payment tracking spreadsheet",
+      "instances": [
+        {
+          "instance_id": "missing_payments_tracking_xls_1",
+          "note": null
+        },
+        {
+          "instance_id": "missing_payments_tracking_xls_2",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiGoogleSpreadsheet",
+        "svg": "M19,11V9H11V5H9V9H5V11H9V19H11V11H19M19,3C19.5,3 20,3.2 20.39,3.61C20.8,4 21,4.5 21,5V19C21,19.5 20.8,20 20.39,20.39C20,20.8 19.5,21 19,21H5C4.5,21 4,20.8 3.61,20.39C3.2,20 3,19.5 3,19V5C3,4.5 3.2,4 3.61,3.61C4,3.2 4.5,3 5,3H19Z"
+      }
+    },
+    {
+      "id": "data",
+      "name": "data",
+      "description": "stored payment information",
+      "instances": [
+        {
+          "instance_id": "data_1",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiReceiptText",
+        "svg": "M3,22L4.5,20.5L6,22L7.5,20.5L9,22L10.5,20.5L12,22L13.5,20.5L15,22L16.5,20.5L18,22L19.5,20.5L21,22V2L19.5,3.5L18,2L16.5,3.5L15,2L13.5,3.5L12,2L10.5,3.5L9,2L7.5,3.5L6,2L4.5,3.5L3,2M18,9H6V7H18M18,13H6V11H18M18,17H6V15H18V17Z"
+      }
+    },
+    {
+      "id": "paper_version",
+      "name": "paper version",
+      "description": "printed paper document",
+      "instances": [
+        {
+          "instance_id": "paper_version_1",
+          "note": "used for the voting of the new contracts on a monthly basis"
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiPaperRoll",
+        "svg": "M9 3C5.69 3 3.14 5.69 3 9V21H12V13.46C13.1 14.45 14.5 15 16 15C19.31 15 22 12.31 22 9C22 5.69 19.31 3 16 3H9M16 5C18.21 5 20 6.79 20 9C20 11.21 18.21 13 16 13C13.79 13 12 11.21 12 9C12 6.79 13.79 5 16 5M16 7.25C15.03 7.25 14.25 8.03 14.25 9C14.25 9.97 15.03 10.75 16 10.75C16.97 10.75 17.75 9.97 17.75 9C17.75 8.03 16.97 7.25 16 7.25M4 12H5V13H4V12M6 12H7V13H6V12M8 12H9V13H8V12M10 12H11V13H10V12Z"
+      }
+    }
+  ],
+  "activities": [
+    {
+      "step": 1,
+      "text": "The accountant informs the risk manager about the unpaid installment.",
+      "main_activity": {
+        "subject_id": "accountant",
+        "action": "informs about",
+        "object_id": "unpaid_installment_1",
+        "relation": "to",
+        "target_id": "risk_manager"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 2,
+      "text": "The risk manager enters the unpaid installment into the missing payments tracking.xls.",
+      "main_activity": {
+        "subject_id": "risk_manager",
+        "action": "enters",
+        "object_id": "unpaid_installment_2",
+        "relation": "into",
+        "target_id": "missing_payments_tracking_xls_1"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 3,
+      "text": "The risk price table xls extracts the data from the missing payments tracking.xls.",
+      "main_activity": {
+        "subject_id": "risk_price_table_xls",
+        "action": "extracts",
+        "object_id": "data_1",
+        "relation": "from",
+        "target_id": "missing_payments_tracking_xls_2"
+      },
+      "sub_activities": []
+    },
+    {
+      "step": 4,
+      "text": "The risk manager prints out the paper version of the risk price table xls.",
+      "main_activity": {
+        "subject_id": "risk_manager",
+        "action": "prints out",
+        "object_id": "paper_version_1",
+        "relation": null,
+        "target_id": null
+      },
+      "sub_activities": [
+        {
+          "line_order": 2,
+          "subject_id": "paper_version_1",
+          "relation": "of",
+          "target_id": "risk_price_table_xls"
+        }
+      ]
+    }
+  ]
+}

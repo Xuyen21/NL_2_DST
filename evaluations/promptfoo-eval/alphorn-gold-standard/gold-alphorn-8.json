@@ -1,0 +1,134 @@
+{
+  "title": "Monthly installment payment and booking",
+  "actors": [
+    {
+      "id": "customer",
+      "name": "customer",
+      "type": "Person",
+      "note": null
+    },
+    {
+      "id": "accountant",
+      "name": "accountant",
+      "type": "Person",
+      "note": null
+    },
+    {
+      "id": "bank",
+      "name": "bank",
+      "type": "System",
+      "note": null
+    }
+  ],
+  "work_objects": [
+    {
+      "id": "monthly_installment",
+      "name": "monthly installment",
+      "description": "recurring payment amount",
+      "instances": [
+        {
+          "instance_id": "monthly_installment_1",
+          "note": null
+        },
+        {
+          "instance_id": "monthly_installment_2",
+          "note": null
+        },
+        {
+          "instance_id": "monthly_installment_3",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiCashSync",
+        "svg": "M3 6V18H13.32C13.1 17.33 13 16.66 13 16H7C7 14.9 6.11 14 5 14V10C6.11 10 7 9.11 7 8H17C17 9.11 17.9 10 19 10V10.06C19.67 10.06 20.34 10.18 21 10.4V6H3M12 9C10.3 9.03 9 10.3 9 12S10.3 14.94 12 15C12.38 15 12.77 14.92 13.14 14.77C13.41 13.67 13.86 12.63 14.97 11.61C14.85 10.28 13.59 8.97 12 9M19 11L21.25 13.25L19 15.5V14C17.15 14 15.94 15.96 16.76 17.62L15.67 18.71C13.91 16.05 15.81 12.5 19 12.5V11M19 22L16.75 19.75L19 17.5V19C20.85 19 22.06 17.04 21.24 15.38L22.33 14.29C24.09 16.95 22.19 20.5 19 20.5V22"
+      }
+    },
+    {
+      "id": "bank_account",
+      "name": "bank account",
+      "description": "financial account",
+      "instances": [
+        {
+          "instance_id": "bank_account_1",
+          "note": null
+        },
+        {
+          "instance_id": "bank_account_2",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiBank",
+        "svg": "M11.5,1L2,6V8H21V6M16,10V17H19V10M2,22H21V19H2M10,10V17H13V10M4,10V17H7V10H4Z"
+      }
+    },
+    {
+      "id": "accounting_books",
+      "name": "accounting books",
+      "description": "financial records",
+      "instances": [
+        {
+          "instance_id": "accounting_books_1",
+          "note": null
+        }
+      ],
+      "icon": {
+        "mdi_name": "mdiBookAccount",
+        "svg": "M18 2H12V9L9.5 7.5L7 9V2H6A2 2 0 0 0 4 4V20A2 2 0 0 0 6 22H18A2 2 0 0 0 20 20V4A2 2 0 0 0 18 2M14 12A2 2 0 1 1 12 14A2 2 0 0 1 14 12M18 20H10V19C10 17.67 12.67 17 14 17S18 17.67 18 19Z"
+      }
+    }
+  ],
+  "activities": [
+    {
+      "step": 1,
+      "text": "The customer pays the monthly installment into the bank account at the bank.",
+      "main_activity": {
+        "subject_id": "customer",
+        "action": "pays",
+        "object_id": "monthly_installment_1",
+        "relation": "into",
+        "target_id": "bank_account_1"
+      },
+      "sub_activities": [
+        {
+          "line_order": 2,
+          "subject_id": "bank_account_1",
+          "relation": "at",
+          "target_id": "bank"
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "text": "The accountant searches the monthly installment in the bank account at the bank.",
+      "main_activity": {
+        "subject_id": "accountant",
+        "action": "searches",
+        "object_id": "monthly_installment_2",
+        "relation": "in",
+        "target_id": "bank_account_2"
+      },
+      "sub_activities": [
+        {
+          "line_order": 2,
+          "subject_id": "bank_account_2",
+          "relation": "at",
+          "target_id": "bank"
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "text": "The accountant books the monthly installment into the accounting books.",
+      "main_activity": {
+        "subject_id": "accountant",
+        "action": "books",
+        "object_id": "monthly_installment_3",
+        "relation": "into",
+        "target_id": "accounting_books_1"
+      },
+      "sub_activities": []
+    }
+  ]
+}

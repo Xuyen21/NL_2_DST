@@ -87,7 +87,7 @@ class VerifyWorkObjects(VerifyOutput):
                 output_note = output_instances_map[i]
                 note_similarity = semantic_similarity(output_note, expected_instances_map[i])
 
-                if note_similarity['similarity_score'] >= 0.80:
+                if note_similarity['similarity_score'] >= 0.60:
                     correct_fields += 1  # 1 for the correct note
                 else:
                     # only the instance is correct

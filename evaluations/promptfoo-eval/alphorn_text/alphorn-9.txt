@@ -1,0 +1,8 @@
+1.The customer searches the monthly installment in the bank account at the bank.
+-note on the customer: has not paid monthly installment!
+-note on monthly installment: does not find it
+
+2.The accountant informs the risk manager about the unpaid installment.
+
+3.The accountant sends the dunning letter to the customer.
+

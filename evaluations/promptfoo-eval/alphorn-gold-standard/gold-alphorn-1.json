@@ -4,17 +4,20 @@
     {
       "id": "customer",
       "name": "customer",
-      "type": "Person"
+      "type": "Person",
+      "note": null
     },
     {
       "id": "salesperson",
       "name": "salesperson",
-      "type": "Person"
+      "type": "Person",
+      "note": null
     },
     {
       "id": "risk_manager",
       "name": "risk manager",
-      "type": "Person"
+      "type": "Person",
+      "note": null
     }
   ],
   "work_objects": [

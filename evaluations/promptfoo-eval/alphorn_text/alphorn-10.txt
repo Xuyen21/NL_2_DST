@@ -1,0 +1,11 @@
+1.The accountant informs the risk manager about the unpaid installment.
+
+2.The risk manager enters the unpaid installment into the missing payments tracking.xls.
+note on missing payments tracking.xls: resides on network drive R:\tracking
+
+3.The risk price table xls extracts the data from the missing payments tracking.xls.
+
+4.The risk manager prints out the paper version of the risk price table xls.
+note on the paper:  used for the voting of the new contracts on a monthly basis
+
+

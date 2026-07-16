@@ -34,7 +34,7 @@ BankAccount(bank_account, bank account)
 Bank(bank, bank)
 
 
-Alert(unpaid_installment, unpaid installment)
+Alert(unpaid_installment, unpaid installment, $note=""                                                                  )
 
 activity(1,customer, searches, monthly_installment, in, bank_account)
 activity(, bank_account, at, bank)

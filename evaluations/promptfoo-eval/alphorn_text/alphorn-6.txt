@@ -1,0 +1,7 @@
+1.The salesperson fills out the contract with the contract number, the car, and the price.
+
+2.The salesperson calculates the monthly installment for the contract from the price, the interest, and the term.
+
+3.The salesperson offers the contract to the customer.
+
+4.The customer signs the contract and returns it to the salesperson.

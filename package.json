@@ -1,7 +1,10 @@
 {
   "scripts": {
     "eval": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml",
-    "evaljson": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output results_1.json",
+    "evaljson": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output evaluations/results-zero-shot-qwenmax.json",
+    "evalcsv": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output result_1.csv",
+    "evalhtml": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output result_1.html",
+    "evaljsonl": "promptfoo eval -c .\\evaluations\\promptfoo-eval\\promptfooconfig.yaml --output result_1.jsonl",
     "testeval": "promptfoo eval -c .\\eval-json-output\\promptfooconfig.yaml",
     "view": "promptfoo view",
     "promptfoo": "promptfoo"

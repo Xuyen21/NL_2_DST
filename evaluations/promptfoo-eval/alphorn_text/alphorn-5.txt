@@ -6,6 +6,6 @@
 
 4.The online leasing service notifies the risk manager about the credit rating.
 
-5.The risk manager decides on a voting result for the risk assessment, and the decision is stored in the risk management system.
+5.The risk manager decides on a voting result for the risk assessment in the risk management system.
 
 6.The risk manager signs the voted contract in the online leasing service.

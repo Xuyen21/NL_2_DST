@@ -101,3 +101,7 @@ class VerifyOutput:
     def verify(self) -> VerificationResult:
         """Verify if a field is correct, hallucinated or missing."""
         raise NotImplementedError("Subclasses must implement verify().")
+
+
+if __name__ == "__main__":
+    print(semantic_similarity('and returns it to', 'to'))

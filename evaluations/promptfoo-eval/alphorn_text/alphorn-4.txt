@@ -1,0 +1,5 @@
+1.The risk manager fetches credit rating for the contract from the rating agency.
+
+2.The risk manager votes the contract with voting result based on the car price and the credit rating.
+
+3.The risk manager signs the voted contract.

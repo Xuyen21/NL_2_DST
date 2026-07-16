@@ -32,7 +32,7 @@ sprite mdiChartBoxOutline <svg width="48" height="48"><g transform="scale(2)"><p
 
 Vote(vote, voting result)
 
-Report(credit_rating, credit rating, $note="Note: \nAn evaluation of the credit risk of the customer. \nExpressed by a letter from A (excellent) to D (poor)")
+Report(credit_rating, credit rating)
 Report(credit_rating2, credit rating)
 
 
@@ -40,7 +40,7 @@ Report(credit_rating2, credit rating)
 Euro(car_price, car price)
 
 Person(risk_manager, risk manager, $color="DarkGreen", $scale=1.5)
-System(rating_agency_website, rating agency website, $color="DarkGreen", $scale=1.5)
+Person(rating_agency, rating agency, $color="DarkGreen", $scale=1.5)
 
 Document(contract, $label=contract)
 Document(contract2, $label=contract)
@@ -49,7 +49,7 @@ Document(contract3, $label=voted contract)
 
 
 activity(1, risk_manager, fetches, credit_rating, for, contract)
-activity(, contract, from, rating_agency_website)
+activity(, contract, from, rating_agency)
 activity(2, risk_manager, votes, contract2, with, vote)
 activity(, vote, based on, car_price)
 activity(, vote, and, credit_rating2)

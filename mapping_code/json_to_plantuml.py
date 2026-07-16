@@ -9,7 +9,8 @@ ACTOR_STYLE = '$color="DarkGreen", $scale=1.5'
 def init_actors(actors: list[object]):
     actors_list = []
     for actor in actors:
-        init_actor = f'{actor["type"]}({actor["id"]},{actor["name"]},{ACTOR_STYLE})'
+        note = actor["note"] if actor["note"] else ""
+        init_actor = f'{actor["type"]}({actor["id"]},{actor["name"]},{ACTOR_STYLE}, $note="{note}")'
         actors_list.append(init_actor)
     return actors_list
 
@@ -170,8 +171,10 @@ def create_plantuml_syntax(story_json) -> str:
 
 def content():
     project_root = Path(__file__).parents[1]
-    alphorn_3 = project_root / "alphorn-test-json" / "output_example_alphorn-2-gemini-flash2.5.json"
-    with open(alphorn_3, "r", encoding="utf-8") as f:
+
+    alphorn_5 = r"C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn-gold-standard\gold-alphorn-5.json"
+    alphorn_6 = r"C:\code\NL_2_DST\result_test_CoT.json"
+    with open(alphorn_6, "r", encoding="utf-8") as f:
         data = json.load(f)
         return data
 

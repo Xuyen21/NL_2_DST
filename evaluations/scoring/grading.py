@@ -1,6 +1,18 @@
 import json
-from typing import Dict, Any, Union
-from helpers import load_json, normalize_text
+import sys
+from pathlib import Path
+
+# Ensure both the project root and evaluations/ are on sys.path so that
+# sibling packages (scoring, verification) are importable when promptfoo
+# runs this file as a standalone script.
+_EVALUATIONS_DIR = Path(__file__).resolve().parents[1]  # .../evaluations/
+_ROOT_DIR = _EVALUATIONS_DIR.parent  # .../NL_2_DST/
+for _p in (_ROOT_DIR, _EVALUATIONS_DIR):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
+
+from scoring import evaluate
+from verification import load_json
 
 
 def extract_actors(payload):
@@ -12,85 +24,38 @@ def extract_actors(payload):
     return []
 
 
-def compute_actor_metrics(detected_actors, expected_actors):
-    detected_by_name = {
-        normalize_text(actor["name"]): actor for actor in detected_actors
-        if isinstance(actor, dict) and "name" in actor
-    }
-    expected_by_name = {
-        normalize_text(actor["name"]): actor for actor in expected_actors
-        if isinstance(actor, dict) and "name" in actor
-    }
+def grading(actual_output, context):
+    get_expected_output = context["vars"]["expected_output"]
+    if isinstance(get_expected_output, dict):
+        expected_output = get_expected_output
+    else:
+        candidate = Path(str(get_expected_output))
+        if candidate.exists():
+            expected_output = load_json(candidate)
+        else:
+            expected_output = json.loads(get_expected_output)
 
-    matched_names = set(detected_by_name).intersection(expected_by_name)
-    matched_count = len(matched_names)
-    total_expected = len(expected_by_name)
-    total_detected = len(detected_by_name)
-
-    recall = matched_count / total_expected if total_expected > 0 else 1.0
-    precision = matched_count / total_detected if total_detected > 0 else 1.0
-    f1 = (
-        (2 * precision * recall) / (precision + recall)
-        if (precision + recall) > 0
-        else 0.0
-    )
-
-    missing = [actor["name"] for actor in expected_actors if normalize_text(actor["name"]) not in matched_names]
-    extra = [actor["name"] for actor in detected_actors if normalize_text(actor["name"]) not in matched_names]
+    eval_story = evaluate(actual_output, expected_output)
 
     return {
-        "pass": matched_count == total_expected and total_detected == total_expected,
-        "score": 2,  # precision,
-        "metrics": {
-            "precision": precision,
-            "recall": recall,
-            "f1": round(f1, 2),
-            "matched_count": matched_count,
-            "total_expected": total_expected,
-            "total_detected": total_detected,
-            "false_negatives": len(missing),
-            "false_positives": len(extra),
-        },
-        "missing": missing,
-        "extra": extra,
+        "pass": True,
+        "score": eval_story['pass_rate'],
+        "reason": "",
+        "total_fields": eval_story['total_fields'],
+        "correct_fields": eval_story['correct_fields'],
+        "actors_result": eval_story['actors_stats'],
+        "work_objects_result": eval_story['work_objects_stats'],
+        "activities_result": eval_story['activities_stats']
     }
 
-def compute_work_objects_metrics(actual_work_objects: list[dict], expected_work_objects: list[dict]) -> dict:
-    actual_work_objects = actual_work_objects
 
-
-def grading(output: str, context) -> Union[bool, float, Dict[str, Any]]:
-    expected_output = context["vars"]["expected_output"]
-
-
-
-    # actual_actors = extract_actors(output)
-    # expected_actors = extract_actors(expected_output)
-    # compute_metric = compute_actor_metrics(actual_actors, expected_actors)
-
-
-    return {
-        **compute_metric,
-        "reason": json.dumps(
-            {
-                "output": output,
-                "expected_output": expected_output,
-                "metrics": compute_metric["metrics"],
-            },
-            ensure_ascii=False,
-            indent=2,
-            default=str,
-        )
-    }
-
-###################################
-
-output_path = r"/alphorn-test-json/output_example_alphorn-3.json"
-expected_path = r"C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn-gold-standard\gold-alphorn-3.json"
-
-
-
-
+project_root = Path(__file__).parents[2]
+output_path = project_root / "alphorn-test-json" / "output_example_alphorn-3.json"
+expected_path = project_root / "evaluations" / "promptfoo-eval" / "alphorn-gold-standard" / "gold-alphorn-3.json"
 
 if __name__ == "__main__":
-    pass
+    actual_data = load_json(output_path)
+    expected_data = load_json(expected_path)
+
+    eval = evaluate(actual_data, expected_data)
+    print(round(eval, 3))
