@@ -76,7 +76,7 @@ def evaluate(actual_output: dict, expected_output: dict) -> dict:
 
 if __name__ == "__main__":
     actual_story_3 = r'C:\code\NL_2_DST\alphorn-test-json\output_example_alphorn-3.json'
-    expected_story_3 = r'C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn-gold-standard\gold-alphorn-3.json'
+    expected_story_3 = r'C:\code\NL_2_DST\evaluations\promptfoo_eval\alphorn-gold-standard\gold-alphorn-3.json'
 
     actual = load_json(actual_story_3)
     expected = load_json(expected_story_3)

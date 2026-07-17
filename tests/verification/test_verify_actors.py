@@ -48,11 +48,6 @@ class TestVerifyActors:
         assert result.correct_fields == 9
         assert result.missing_fields.total == 3
         assert result.hallu_fields.total == 0
-        # assert result.missing_fields.names.total == 2
-        # assert result.missing_fields.names.details == ["risk management system"]
-        # assert result.missing_fields.types.total == 0
-        # assert result.hallu_fields.names.total == 0
-        # assert result.hallu_fields.types.total == 0
 
     def test_verify_actors_hallucinated_actor(self):
         actual_data = [
@@ -73,11 +68,6 @@ class TestVerifyActors:
         assert result.correct_fields == 9
         assert result.missing_fields.total == 0
         assert result.hallu_fields.total == 3
-        # assert result.missing_fields.names.total == 0
-        # assert result.missing_fields.types.total == 0
-        # assert result.hallu_fields.names.total == 2
-        # assert result.hallu_fields.names.details == ["risk management system"]
-        # assert result.hallu_fields.types.total == 0
 
     def test_verify_actors_incorrect_type(self):
         actual_data = [
@@ -93,8 +83,3 @@ class TestVerifyActors:
         assert result.correct_fields == 2
         assert result.missing_fields.total == 0
         assert result.hallu_fields.total == 1
-        # assert result.missing_fields.names.total == 0
-        # assert result.missing_fields.types.total == 0
-        # assert result.hallu_fields.names.total == 1
-        # assert result.hallu_fields.names.details == ["risk manager"]
-        # assert result.hallu_fields.types.total == 0

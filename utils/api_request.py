@@ -40,7 +40,11 @@ def api_response(
     if output is None:
         raise ValueError(f"Model '{model_name}' returned no message content")
     output_text: str = output
-    validated_domain_story = DomainStory.model_validate_json(output_text)
+
+    if schema is not None:
+        validated_output = DomainStory.model_validate_json(output_text)
+    else:
+        validated_output = output_text
 
     usage = None
     if getattr(resp, "usage", None) is not None:
@@ -51,7 +55,7 @@ def api_response(
         }
 
     return {
-        "output": validated_domain_story,
+        "output": validated_output,
         "token_usage": usage,
     }
 

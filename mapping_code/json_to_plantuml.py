@@ -1,7 +1,5 @@
-import json
 import re
 from typing import Any
-from pathlib import Path
 
 from pyarrow import null
 
@@ -50,14 +48,6 @@ def init_sprites(work_objects: list[JsonDict]):
     return sprites_list
 
 
-# def init_work_objects(work_objects: list[object]):
-#     work_objects_list = []
-#     for work_object in work_objects:
-#         work_obj_name = work_object['name']
-#         work_obj_instances = work_object['instances']
-#
-
-
 def init_work_objects(work_obj_instances: list[JsonDict]):
     work_obj_instance_list = []
 
@@ -85,7 +75,8 @@ def init_activities(activities: list[JsonDict]):
         main_activity = activity['main_activity']
         # preposition and target_id can be null
         relation = f'{main_activity['relation']}' if main_activity['relation'] is not None else ''
-        target_id = sanitize_identifier(main_activity['target_id'], fallback_prefix="target") if main_activity['target_id'] is not None else ''
+        target_id = sanitize_identifier(main_activity['target_id'], fallback_prefix="target") if main_activity[
+                                                                                                     'target_id'] is not None else ''
         subject_id = sanitize_identifier(main_activity['subject_id'], fallback_prefix="subject")
         object_id = sanitize_identifier(main_activity['object_id'], fallback_prefix="object")
 
@@ -101,10 +92,7 @@ def init_activities(activities: list[JsonDict]):
                 sub_subject_id = sanitize_identifier(sub_act['subject_id'], fallback_prefix="subject")
                 sub_target_id = sanitize_identifier(sub_act['target_id'], fallback_prefix="target")
                 sub_action = f"activity( , {sub_subject_id}, {sub_act['relation']}, {sub_target_id})"
-
                 activities_list.append(sub_action)
-
-        # print(f"activities_list: {"\n".join(activities_list)}")
 
     return activities_list
 
@@ -145,18 +133,6 @@ test = [
     }]
 
 
-# for activity in activities:
-#     for index, line in enumerate(activity['lines']):
-#         # within the same step, only assign step number for the first activities. For substep, use empty string
-#         order = f'activity({activity['step']}' if index == 0 else f'activity( '
-#         # preposition and target_id can be null
-#         preposition = f', {line['preposition']}' if line['preposition'] is not None else ''
-#         target_id = f', {line['target_id']}' if line['target_id'] is not None else ''
-#         action = f"{order}, {line['subject_id']}, {line['action']}, {line['object_id']} {preposition} {target_id})"
-#         activities_list.append(action)
-# return activities_list
-
-
 def create_plantuml_syntax(story_json) -> str:
     INIT_LINE = ["@startuml", "!include <domainstory/Domainstory>"]
     title = f'title <size:24><b>{story_json["title"]}</b></size>'
@@ -190,19 +166,3 @@ def create_plantuml_syntax(story_json) -> str:
 
     INIT_LINE.append("@enduml")
     return "\n".join(INIT_LINE)
-
-
-def content():
-    project_root = Path(__file__).parents[1]
-
-    alphorn_5 = r"C:\code\NL_2_DST\evaluations\promptfoo-eval\alphorn-gold-standard\gold-alphorn-5.json"
-    alphorn_6 = r"C:\code\NL_2_DST\result_test_CoT.json"
-    with open(alphorn_6, "r", encoding="utf-8") as f:
-        data = json.load(f)
-        return data
-
-
-if __name__ == "__main__":
-    json_data = content()
-    output = Path(__file__).parent / "test.puml"
-    output.write_text(create_plantuml_syntax(json_data), encoding="utf-8")

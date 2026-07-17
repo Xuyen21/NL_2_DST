@@ -51,7 +51,7 @@ def grading(actual_output, context):
 
 project_root = Path(__file__).parents[2]
 output_path = project_root / "alphorn-test-json" / "output_example_alphorn-3.json"
-expected_path = project_root / "evaluations" / "promptfoo-eval" / "alphorn-gold-standard" / "gold-alphorn-3.json"
+expected_path = project_root / "evaluations" / "promptfoo_eval" / "alphorn-gold-standard" / "gold-alphorn-3.json"
 
 if __name__ == "__main__":
     actual_data = load_json(output_path)

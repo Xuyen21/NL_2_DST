@@ -5,8 +5,8 @@ from statistics import median
 from verification import load_json
 
 
-REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-CoT-v0-1-2.json"
-PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo-eval" / "promptfooconfig.yaml"
+REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-deepseek-twophase.json"
+PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo_eval" / "promptfooconfig.yaml"
 
 
 def load_promptfoo_providers(config_path: Path) -> list[dict[str, str]]:

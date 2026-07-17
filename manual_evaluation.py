@@ -10,8 +10,8 @@ from plantuml import deflate_and_encode
 from mapping_code.json_to_plantuml import create_plantuml_syntax
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-RESULTS_PATH = PROJECT_ROOT / "evaluations" / "results-zero-shot-CoT-v0-1-2.json"
-PROMPTFOO_CONFIG_PATH = PROJECT_ROOT / "evaluations" / "promptfoo-eval" / "promptfooconfig.yaml"
+RESULTS_PATH = PROJECT_ROOT / "evaluations" / "results-zero-shot-deepseek-twophase.json"
+PROMPTFOO_CONFIG_PATH = PROJECT_ROOT / "evaluations" / "promptfoo_eval" / "promptfooconfig.yaml"
 OUTPUT_DIR = PROJECT_ROOT / "manual_evaluation_output"
 PLANTUML_VALIDATION_URL = "https://www.plantuml.com/plantuml/txt/"
 VALIDATION_TIMEOUT_SECONDS = 30

@@ -28,6 +28,29 @@ providers:
       model: gpt-5.4
       provider: openai
       label: Gpt-5.4
+  - id: file://provider_requests.py:two_phase_zeroshot_deepseek
+    config:
+      model: deepseek-v4-flash
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: DeepSeek v4 Flash
+  - id: file://provider_requests.py:two_phase_zeroshot_qwen
+    config:
+      model: qwen3.7-max
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: Qwen3.7-Max
+  - id: file://provider_requests.py:two_phase_zeroshot_glm
+    config:
+      model: glm-5.2
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: GLM-5.2
+  - id: file://provider_requests.py:two_phase_zeroshot_gpt
+    config:
+      model: gpt-5.4
+      provider: openai
+      label: Gpt-5.4
 
 
 

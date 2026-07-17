@@ -8,7 +8,7 @@ from evaluations.verification.verify_work_objects import group_by_key, group_by_
 # Path to real test fixtures
 _PROJECT_ROOT = Path(__file__).parents[2]
 _OUTPUT_ALPHORN_2 = _PROJECT_ROOT / "alphorn-test-json" / "output_example_alphorn-2-gemini-flash2.5.json"
-_GOLD_ALPHORN_2 = _PROJECT_ROOT / "evaluations" / "promptfoo-eval" / "alphorn-gold-standard" / "gold-alphorn-2.json"
+_GOLD_ALPHORN_2 = _PROJECT_ROOT / "evaluations" / "promptfoo_eval" / "alphorn-gold-standard" / "gold-alphorn-2.json"
 
 # Small inline fixtures shared by several unit tests
 _WORK_OBJECTS_SINGLE = [

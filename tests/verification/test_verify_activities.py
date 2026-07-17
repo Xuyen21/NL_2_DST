@@ -87,7 +87,7 @@ class TestVerifyActivities:
 
         result = self._verify(actual_data, expected_data)
 
-        assert result.total_fields == 6
+        assert result.total_fields == 10
         assert result.correct_fields == 10
         assert result.missing_fields.total == 0
         assert result.hallu_fields.total == 0
@@ -143,10 +143,6 @@ class TestVerifyActivities:
         assert result.correct_fields == 9
         assert result.missing_fields.total == 1
         assert result.hallu_fields.total == 0
-        # assert result.missing_fields.main_activity.total == 1
-        # assert result.missing_fields.sub_activities.total == 0
-        # assert result.hallu_fields.main_activity.total == 0
-        # assert result.hallu_fields.sub_activities.total == 0
 
     def test_verify_activity_hallucinated_main_activity_action(self):
         actual_data = [{
@@ -195,10 +191,6 @@ class TestVerifyActivities:
         assert result.correct_fields == 9
         assert result.missing_fields.total == 0
         assert result.hallu_fields.total == 1
-        # assert result.missing_fields.main_activity.total == 0
-        # assert result.hallu_fields.main_activity.total == 1
-        # assert result.missing_fields.sub_activities.total == 0
-        # assert result.hallu_fields.sub_activities.total == 0
 
     def test_verify_activity_missing_subactivity_line(self):
         actual_data = [{
@@ -253,11 +245,6 @@ class TestVerifyActivities:
         assert result.correct_fields == 10
         assert result.missing_fields.total == 4
         assert result.hallu_fields.total == 0
-        # assert result.missing_fields.main_activity.total == 0
-        # assert result.missing_fields.sub_activities.total == 4
-        # assert result.missing_fields.sub_activities.details == ['3']
-        # assert result.hallu_fields.main_activity.total == 0
-        # assert result.hallu_fields.sub_activities.total == 0
 
     def test_verify_activity_hallucinated_subactivity_line(self):
         actual_data = [{
@@ -312,8 +299,3 @@ class TestVerifyActivities:
         assert result.correct_fields == 10
         assert result.missing_fields.total == 0
         assert result.hallu_fields.total == 4
-        # assert result.missing_fields.main_activity.total == 0
-        # assert result.missing_fields.sub_activities.total == 0
-        # assert result.hallu_fields.main_activity.total == 0
-        # assert result.hallu_fields.sub_activities.total == 4
-        # assert result.hallu_fields.sub_activities.details == ['3']

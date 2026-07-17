@@ -29,13 +29,6 @@ Let's think step by step.
 """
 
 # PROMPT_1 = """
-# Identify the Actors, Activities, Work Objects.
-# Then you count how many times the same work object is mentioned throughout the entire story
-# in the following text:
-# Text: {user_story}
-# Let’s think step by step.
-# """
-# PROMPT_1 = """
 # Read the domain story below and extract all relevant domain story elements in a complete intermediate representation.
 # Include all actors mentioned in the text, including persons, groups, and systems.
 # Include all work objects, exactly how many times each work object is explicitly mentioned, and all activities and relations in their original order.
