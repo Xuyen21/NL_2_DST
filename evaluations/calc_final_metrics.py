@@ -2,48 +2,12 @@ import re
 from pathlib import Path
 from statistics import median
 
+from utils.promptfoo_result_utils import extract_prompting_mode, load_provider_models
 from verification import load_json
 
 
-REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-deepseek-twophase.json"
-PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo_eval" / "promptfooconfig.yaml"
-
-
-def load_promptfoo_providers(config_path: Path) -> list[dict[str, str]]:
-    providers: list[dict[str, str]] = []
-    current_provider: dict[str, str] | None = None
-    inside_providers = False
-
-    for raw_line in config_path.read_text(encoding="utf-8").splitlines():
-        stripped_line = raw_line.strip()
-
-        if not stripped_line or stripped_line.startswith("#"):
-            continue
-
-        if stripped_line == "providers:":
-            inside_providers = True
-            continue
-
-        if inside_providers and not raw_line.startswith("  "):
-            break
-
-        if not inside_providers:
-            continue
-
-        if raw_line.startswith("  - id: "):
-            if current_provider and current_provider.get("id") and current_provider.get("label"):
-                providers.append(current_provider)
-            current_provider = {"id": raw_line.split(": ", 1)[1].strip()}
-            continue
-
-        if current_provider and raw_line.startswith("      label: "):
-            current_provider["label"] = raw_line.split(": ", 1)[1].strip()
-
-    if current_provider and current_provider.get("id") and current_provider.get("label"):
-        providers.append(current_provider)
-
-    return providers
-
+REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-cot-gpt-flash.json"
+PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo_eval" / "promptfooconfig_pilot.yaml"
 
 def format_provider_name(label: str) -> str:
     first_token = label.split()[0]
@@ -54,6 +18,17 @@ def format_provider_name(label: str) -> str:
         return base_name.upper()
 
     return base_name.capitalize()
+
+
+def load_promptfoo_providers(config_path: Path) -> list[dict[str, str]]:
+    provider_models = load_provider_models(config_path)
+    return [
+        {
+            "id": provider_id,
+            "label": model_name,
+        }
+        for provider_id, model_name in provider_models.items()
+    ]
 
 
 class CalculateFinalMetrics:
@@ -165,11 +140,14 @@ if __name__ == "__main__":
 
     metrics_by_provider = []
     for provider_config in provider_configs:
-        display_name = format_provider_name(provider_config["label"])
+        model_name = format_provider_name(provider_config["label"])
+        prompting_mode = extract_prompting_mode(provider_config["id"])
+        display_name = f"{model_name} ({prompting_mode})"
         metrics_by_provider.append(
             {
                 "name": display_name,
                 "label": provider_config["label"],
+                "prompting_mode": prompting_mode,
                 "metrics": CalculateFinalMetrics(results_list, provider_config["id"]),
             }
         )

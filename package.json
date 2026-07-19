@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "evaljson": "promptfoo eval -c .\\evaluations\\promptfoo_eval\\promptfooconfig.yaml --output evaluations/results-zero-shot-twophase.json",
+    "eval-pilot": "promptfoo eval -c .\\evaluations\\promptfoo_eval\\promptfooconfig_pilot.yaml --output evaluations/results-zero-shot-pilot.json",
+    "eval-final": "promptfoo eval -c .\\evaluations\\promptfoo_eval\\promptfooconfig_final.yaml --output evaluations/results-zero-shot-final.json",
     "promptfoo": "promptfoo"
   },
   "devDependencies": {

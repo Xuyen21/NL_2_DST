@@ -1,12 +1,12 @@
 import os
 import sys
+import time
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from icons_module.icon_semantic_search_2 import search_icons
 from prompt_strategy.prompts import SYSTEM_PROMPT, ONE_PHASE_PROMPT, PROMPT_1, PROMPT_2
 from text_to_json.schema_design import DomainStory
 from utils.api_request import api_response
@@ -32,6 +32,8 @@ class ApiCall:
         resolved_api_key_env_name = api_key_env_name or self.resolve_api_key_env_name(self.provider_name)
         self.api_key = os.environ.get(resolved_api_key_env_name) if resolved_api_key_env_name else None
         self.user_story = context["vars"]["input"]
+        self.timeout_seconds = float(os.getenv("LLM_TIMEOUT_SECONDS", "120"))
+        self.phase_gap_seconds = max(0.0, float(os.getenv("LLM_PHASE_GAP_SECONDS", "0")))
 
     @staticmethod
     def resolve_custom_llm_provider(provider_name: str | None) -> str | None:
@@ -51,6 +53,8 @@ class ApiCall:
             "xai": "XAI_API_KEY",
             "deepseek": "DEEPSEEK_API_KEY",
         }
+        if provider_name is None:
+            return None
         return provider_to_key_env.get(provider_name)
 
     @staticmethod
@@ -68,23 +72,33 @@ class ApiCall:
             api_key=self.api_key,
             api_base=self.api_base,
             custom_llm_provider=self.resolve_custom_llm_provider(self.provider_name),
+            timeout_seconds=self.timeout_seconds,
         )
 
     @staticmethod
-    def _finalize_output(domain_story) -> dict:
-        updated = search_icons(domain_story)
-        return updated.model_dump(mode="json")
+    def _finalize_output(domain_story: DomainStory) -> dict:
+        return domain_story.model_dump(mode="json")
 
     @staticmethod
-    def _handle_error(e: Exception) -> dict:
-        if isinstance(e, litellm.ServiceUnavailableError):
-            return {"error": f"503 Service Unavailable: {str(e)}"}
+    def _raise_with_details(e: Exception) -> None:
+        detailed_message = getattr(e, "_api_request_details", None) or f"{e.__class__.__name__}: {e}"
+        attempts = getattr(e, "_api_request_attempts", None)
+        attempt_suffix = f" after {attempts} attempt(s)" if attempts else ""
+        setattr(e, "promptfoo_error_detail", detailed_message)
+
         if isinstance(e, litellm.RateLimitError):
-            return {"error": f"429 Rate Limit: {str(e)}"}
+            raise RuntimeError(f"429 Rate Limit{attempt_suffix}: {detailed_message}") from e
+        if isinstance(e, litellm.ServiceUnavailableError):
+            raise RuntimeError(f"503 Service Unavailable{attempt_suffix}: {detailed_message}") from e
+
         error_msg = str(e)
-        if "503" in error_msg:
-            return {"error": f"503 Service Unavailable: {error_msg}"}
-        return {"error": f"Provider failed: {error_msg}"}
+        lowered_error_msg = error_msg.lower()
+        if "429" in error_msg or "rate limit" in lowered_error_msg or "too many requests" in lowered_error_msg:
+            raise RuntimeError(f"429 Rate Limit{attempt_suffix}: {detailed_message}") from e
+        if "503" in error_msg or "service unavailable" in lowered_error_msg:
+            raise RuntimeError(f"503 Service Unavailable{attempt_suffix}: {detailed_message}") from e
+
+        raise RuntimeError(f"Provider failed{attempt_suffix}: {detailed_message}") from e
 
     @staticmethod
     def _combine_token_usage(usage_1: dict | None, usage_2: dict | None) -> dict | None:
@@ -107,7 +121,7 @@ class ApiCall:
                 "token_usage": resp["token_usage"],
             }
         except Exception as e:
-            return self._handle_error(e)
+            self._raise_with_details(e)
 
     def two_phase_zeroshot_call(self):
         prompt_1 = PROMPT_1.format(user_story=self.user_story)
@@ -119,6 +133,9 @@ class ApiCall:
             messages.append({"role": "assistant", "content": response_1["output"]})
             messages.append({"role": "user", "content": PROMPT_2})
 
+            if self.phase_gap_seconds > 0:
+                time.sleep(self.phase_gap_seconds)
+
             response_2 = self._call_api(messages, schema=DomainStory)
 
             return {
@@ -128,7 +145,7 @@ class ApiCall:
                 ),
             }
         except Exception as e:
-            return self._handle_error(e)
+            self._raise_with_details(e)
 
 
 def one_phase_zeroshot(prompt: str, options: dict[str, Any], context: dict[str, Any]):
@@ -141,14 +158,16 @@ def two_phase_zeroshot(prompt: str, options: dict[str, Any], context: dict[str, 
     return api_call.two_phase_zeroshot_call()
 
 
-# One phase prompting
-one_phase_zeroshot_gpt = one_phase_zeroshot
-one_phase_zeroshot_qwen = one_phase_zeroshot
-one_phase_zeroshot_glm = one_phase_zeroshot
-one_phase_zeroshot_deepseek = one_phase_zeroshot
+PROMPTFOO_PROVIDER_ALIASES = (
+    "gpt",
+    "gemini",
+    "claude",
+    "grok",
+    "qwen",
+    "deepseek",
+)
 
-# Two phase prompting
-two_phase_zeroshot_gpt = two_phase_zeroshot
-two_phase_zeroshot_qwen = two_phase_zeroshot
-two_phase_zeroshot_glm = two_phase_zeroshot
-two_phase_zeroshot_deepseek = two_phase_zeroshot
+
+for alias in PROMPTFOO_PROVIDER_ALIASES:
+    globals()[f"one_phase_zeroshot_{alias}"] = one_phase_zeroshot
+    globals()[f"two_phase_zeroshot_{alias}"] = two_phase_zeroshot

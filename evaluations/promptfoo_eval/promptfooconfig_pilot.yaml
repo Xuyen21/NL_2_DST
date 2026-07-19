@@ -1,8 +1,13 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: view performance
+description: pilot model comparison
 
-#evaluateOptions:
-#  maxConcurrency: 10
+prompts:
+  - "{{prompt}}"
+
+evaluateOptions:
+  # Conservative defaults for multi-provider evals.
+  maxConcurrency: 1
+  delay: 5000
 
 providers:
   - id: file://provider_requests.py:one_phase_zeroshot_qwen
@@ -10,49 +15,37 @@ providers:
       model: qwen3.7-max
       provider: qwen-compatible
       base: QWEN_API_BASE
-      label: Qwen3.7-Max
-  - id: file://provider_requests.py:one_phase_zeroshot_deepseek
-    config:
-      model: deepseek-v4-flash
-      provider: qwen-compatible
-      base: QWEN_API_BASE
-      label: DeepSeek v4 Flash
-  - id: file://provider_requests.py:one_phase_zeroshot_glm
-    config:
-      model: glm-5.2
-      provider: qwen-compatible
-      base: QWEN_API_BASE
-      label: GLM-5.2
-  - id: file://provider_requests.py:one_phase_zeroshot_gpt
-    config:
-      model: gpt-5.4
-      provider: openai
-      label: Gpt-5.4
-  - id: file://provider_requests.py:two_phase_zeroshot_deepseek
-    config:
-      model: deepseek-v4-flash
-      provider: qwen-compatible
-      base: QWEN_API_BASE
-      label: DeepSeek v4 Flash
+      label: Qwen3.7 Max
   - id: file://provider_requests.py:two_phase_zeroshot_qwen
     config:
       model: qwen3.7-max
       provider: qwen-compatible
       base: QWEN_API_BASE
-      label: Qwen3.7-Max
-  - id: file://provider_requests.py:two_phase_zeroshot_glm
+      label: Qwen3.7 Max
+
+  - id: file://provider_requests.py:one_phase_zeroshot_deepseek
     config:
-      model: glm-5.2
+      model: deepseek-v4-flash
       provider: qwen-compatible
       base: QWEN_API_BASE
-      label: GLM-5.2
-  - id: file://provider_requests.py:two_phase_zeroshot_gpt
+      label: DeepSeek V4 Flash
+  - id: file://provider_requests.py:two_phase_zeroshot_deepseek
     config:
-      model: gpt-5.4
-      provider: openai
-      label: Gpt-5.4
+      model: deepseek-v4-flash
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: DeepSeek V4 Flash
 
-
+  - id: file://provider_requests.py:one_phase_zeroshot_gemini
+    config:
+      model: gemini-3.5-flash
+      provider: gemini
+      label: Gemini 3.5 Flash
+  - id: file://provider_requests.py:two_phase_zeroshot_gemini
+    config:
+      model: gemini-3.5-flash
+      provider: gemini
+      label: Gemini 3.5 Flash
 
 tests:
   - vars:
@@ -127,3 +120,4 @@ tests:
       expected_output:
         file://alphorn-gold-standard//gold-alphorn-10.json
     assert: *grading_assert
+

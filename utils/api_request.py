@@ -1,10 +1,42 @@
+import os
+from typing import Optional, Type, TypeVar
+
 from litellm import completion
-from typing import Type, TypeVar, Optional
 from pydantic import BaseModel
 
 from text_to_json.schema_design import DomainStory
 
 T = TypeVar("T", bound=BaseModel)
+
+DEFAULT_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "300"))
+
+
+def _format_exception_details(exc: Exception) -> str:
+    detail_parts = [f"{exc.__class__.__name__}: {exc}"]
+
+    status_code = getattr(exc, "status_code", None)
+    if status_code is not None:
+        detail_parts.append(f"status_code={status_code}")
+
+    code = getattr(exc, "code", None)
+    if code is not None:
+        detail_parts.append(f"code={code}")
+
+    response = getattr(exc, "response", None)
+    response_text = getattr(response, "text", None)
+    if response_text:
+        detail_parts.append(f"response={response_text}")
+
+    exc_repr = repr(exc)
+    if exc_repr and exc_repr != str(exc):
+        detail_parts.append(f"repr={exc_repr}")
+
+    return " | ".join(detail_parts)
+
+
+def _mark_exception(exc: Exception, attempts: int) -> None:
+    setattr(exc, "_api_request_attempts", attempts)
+    setattr(exc, "_api_request_details", _format_exception_details(exc))
 
 
 def api_response(
@@ -14,13 +46,17 @@ def api_response(
     api_key: Optional[str] = None,
     api_base: Optional[str] = None,
     custom_llm_provider: Optional[str] = None,
+    timeout_seconds: Optional[float] = None,
 ):
+    resolved_timeout_seconds = timeout_seconds or DEFAULT_TIMEOUT_SECONDS
+
     kwargs = {
         "model": model_name,
         "messages": messages,
+        "timeout": resolved_timeout_seconds,
+        "num_retries": 0,
         # "temperature": 0,
         # "seed": 42,
-        # "timeout": 60
     }
 
     if schema is not None:
@@ -35,7 +71,13 @@ def api_response(
     if custom_llm_provider:
         kwargs["custom_llm_provider"] = custom_llm_provider
 
-    resp = completion(**kwargs)
+    try:
+        resp = completion(**kwargs)
+    except Exception as exc:
+        _mark_exception(exc, attempts=1)
+        raise
+
+
     output = resp.choices[0].message.content
     if output is None:
         raise ValueError(f"Model '{model_name}' returned no message content")
@@ -58,20 +100,3 @@ def api_response(
         "output": validated_output,
         "token_usage": usage,
     }
-
-# def api_response(model_name: str, messages: list[object], schema: Type[T] = None):
-#     kwargs = {
-#         "model": model_name,
-#         "messages": messages,
-#         "temperature": 0
-#     }
-#
-#     if schema is not None:
-#         kwargs["response_format"] = schema
-#
-#     resp = completion(**kwargs)
-#     output = resp.choices[0].message.content
-#     str_2_obj = DomainStory.model_validate_json(output)
-#     print("type",type(str_2_obj))
-#
-#     return str_2_obj

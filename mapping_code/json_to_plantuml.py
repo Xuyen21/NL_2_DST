@@ -4,7 +4,13 @@ from typing import Any
 from pyarrow import null
 
 ACTOR_STYLE = '$color="DarkGreen", $scale=1.5'
+MISSING_ACTOR_STYLE = '$color="Red", $scale=1.5'
+MISSING_WORK_OBJECT_SPRITE = "missing_work_object_icon"
+MISSING_WORK_OBJECT_SVG = (
+    "M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 3c.55 0 1 .45 1 1v5c0 .55-.45 1-1 1s-1-.45-1-1V6c0-.55.45-1 1-1zm0 10a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"
+)
 JsonDict = dict[str, Any]
+VALID_ACTOR_TYPES = {"Person", "Group", "System"}
 
 
 def sanitize_identifier(value: object, *, fallback_prefix: str = "id") -> str:
@@ -26,21 +32,43 @@ def init_actors(actors: list[JsonDict]):
     for actor in actors:
         note = actor["note"] if actor["note"] else ""
         actor_id = sanitize_identifier(actor["id"], fallback_prefix="actor")
-        init_actor = f'{actor["type"]}({actor_id},{actor["name"]},{ACTOR_STYLE}, $note="{note}")'
+        actor_type = actor.get("type") if actor.get("type") in VALID_ACTOR_TYPES else "Person"
+        actor_style = ACTOR_STYLE if actor.get("type") in VALID_ACTOR_TYPES else MISSING_ACTOR_STYLE
+        init_actor = f'{actor_type}({actor_id},{actor["name"]},{actor_style}, $note="{note}")'
         actors_list.append(init_actor)
     return actors_list
 
 
+def _build_object_sprite(mdi_name: str, svg: str, procedure_name: str, *, color: str = "$Object_IconColor") -> str:
+    return f"""
+                sprite {mdi_name} <svg width="48" height="48"><g transform="scale(2)"><path d="{svg}" /></g></svg>\n
+                !unquoted procedure {procedure_name}($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = {color}, $background = "")\n
+                  Object($name, "${mdi_name}", $name, $label, $tag, $note, $shape, $scale, $color, $background)\n
+                !endprocedure
+                """
+
+
 def init_sprites(work_objects: list[JsonDict]):
-    sprites_list = []
+    sprites_list = [
+        _build_object_sprite(
+            MISSING_WORK_OBJECT_SPRITE,
+            MISSING_WORK_OBJECT_SVG,
+            MISSING_WORK_OBJECT_SPRITE,
+            color='"Red"',
+        )
+    ]
     for work_object in work_objects:
         procedure_name = sanitize_identifier(work_object["id"], fallback_prefix="work_object")
-        mdi_name = work_object["icon"]["mdi_name"]
-        svg = work_object["icon"]["svg"]
-        sprite = f"""
-                sprite {mdi_name} <svg width="48" height="48"><g transform="scale(2)"><path d="{svg}" /></g></svg>\n
-                !unquoted procedure {procedure_name}($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = $Object_IconColor, $background = "")\n
-                  Object($name, "${mdi_name}", $name, $label, $tag, $note, $shape, $scale, $color, $background)\n
+        icon = work_object.get("icon") or {}
+        mdi_name = icon.get("mdi_name")
+        svg = icon.get("svg")
+
+        if isinstance(mdi_name, str) and mdi_name and isinstance(svg, str) and svg:
+            sprite = _build_object_sprite(mdi_name, svg, procedure_name)
+        else:
+            sprite = f"""
+                !unquoted procedure {procedure_name}($name, $label = "", $tag = "", $note = "", $shape = $Object_Shape, $scale = $Object_IconScale, $color = "Red", $background = "")\n
+                  Object($name, "${MISSING_WORK_OBJECT_SPRITE}", $name, $label, $tag, $note, $shape, $scale, $color, $background)\n
                 !endprocedure
                 """
 

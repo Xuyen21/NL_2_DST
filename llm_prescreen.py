@@ -149,6 +149,10 @@ def shorten(text: str, max_length: int = 100) -> str:
     return normalized[: max_length - 3] + "..."
 
 
+def normalize_text(text: str) -> str:
+    return " ".join(text.split())
+
+
 def get_api_base(model_config: dict[str, str]) -> str | None:
     api_base_env = model_config.get("api_base_env")
     if api_base_env:
@@ -232,6 +236,23 @@ def format_table(rows: list[dict[str, str]]) -> str:
     ])
 
 
+def format_full_details(rows: list[dict[str, str]]) -> str:
+    detailed_rows = [
+        row for row in rows
+        if row.get("details_full") and row["details_full"] != row["details"]
+    ]
+    if not detailed_rows:
+        return ""
+
+    sections = ["", "Full details:"]
+    for row in detailed_rows:
+        sections.extend([
+            f"- {row['provider']} | {row['label']} | {row['model']}",
+            f"  {row['details_full']}",
+        ])
+    return "\n".join(sections)
+
+
 def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
     label = model_config["label"]
     model_name = model_config["model"]
@@ -242,6 +263,7 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
     api_base_env = model_config.get("api_base_env")
 
     if not api_key:
+        details = f"Missing {api_key_env} in .env"
         return {
             "result": "✘",
             "provider": provider,
@@ -250,10 +272,12 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
             "api_base": shorten(api_base or "-", 36),
             "missing_capability": "credentials",
             "latency_ms": "0",
-            "details": f"Missing {api_key_env} in .env",
+            "details": details,
+            "details_full": details,
         }
 
     if api_base_env and not api_base:
+        details = f"Missing {api_base_env} in .env"
         return {
             "result": "✘",
             "provider": provider,
@@ -262,7 +286,8 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
             "api_base": "-",
             "missing_capability": "configuration",
             "latency_ms": "0",
-            "details": f"Missing {api_base_env} in .env",
+            "details": details,
+            "details_full": details,
         }
 
     last_error: Exception | None = None
@@ -271,6 +296,7 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
         try:
             litellm.completion(**build_completion_kwargs(model_config, api_key))
             latency_ms = int((time.time() - start_time) * 1000)
+            details = f"response_format works ({api_key_env})"
             return {
                 "result": "✔",
                 "provider": provider,
@@ -279,12 +305,14 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
                 "api_base": shorten(api_base or "-", 36),
                 "missing_capability": "-",
                 "latency_ms": str(latency_ms),
-                "details": f"response_format works ({api_key_env})",
+                "details": details,
+                "details_full": details,
             }
         except Exception as exc:
             last_error = exc
             latency_ms = int((time.time() - start_time) * 1000)
             if attempt == MAX_RETRIES or not is_retryable_error(exc):
+                details_full = normalize_text(str(exc))
                 return {
                     "result": "✘",
                     "provider": provider,
@@ -293,7 +321,8 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
                     "api_base": shorten(api_base or "-", 36),
                     "missing_capability": detect_missing_capability(exc),
                     "latency_ms": str(latency_ms),
-                    "details": shorten(str(exc)),
+                    "details": shorten(details_full),
+                    "details_full": details_full,
                 }
 
             delay_seconds = min(BASE_RETRY_DELAY_SECONDS * (2 ** (attempt - 1)), MAX_RETRY_DELAY_SECONDS)
@@ -311,4 +340,5 @@ def check_model_capability(model_config: dict[str, str]) -> dict[str, str]:
 if __name__ == '__main__':
     rows = [check_model_capability(model_config) for model_config in MODELS_TO_TEST]
     print(format_table(rows))
+    print(format_full_details(rows))
 

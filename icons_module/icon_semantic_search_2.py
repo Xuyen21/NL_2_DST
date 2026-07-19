@@ -1,7 +1,5 @@
 import os
 from pathlib import Path
-
-# 1. Replace LangChain with native Chroma
 import chromadb
 from chromadb.utils import embedding_functions
 from dotenv import load_dotenv

@@ -89,16 +89,14 @@ MOCK_TOKEN_USAGE = {"prompt": 100, "completion": 50, "total": 150}
 
 class TestOnePhaseCall:
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_returns_output_and_token_usage(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         mock_api_response.return_value = {
             "output": domain_story,
             "token_usage": MOCK_TOKEN_USAGE,
         }
-        mock_search_icons.return_value = domain_story_with_icon
 
         result = api_call.one_phase_call()
 
@@ -106,58 +104,39 @@ class TestOnePhaseCall:
         assert result["output"]["title"] == "Test Story"
         assert result["token_usage"] == MOCK_TOKEN_USAGE
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_api_response_called_with_schema(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         mock_api_response.return_value = {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE}
-        mock_search_icons.return_value = domain_story_with_icon
 
         api_call.one_phase_call()
 
         call_kwargs = mock_api_response.call_args
         assert call_kwargs.kwargs["schema"] is DomainStory
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
-    def test_search_icons_called_with_domain_story(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
-    ):
-        mock_api_response.return_value = {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE}
-        mock_search_icons.return_value = domain_story_with_icon
-
-        api_call.one_phase_call()
-
-        mock_search_icons.assert_called_once_with(domain_story)
-
-    @patch(f"{_MOD_PATH}.api_response")
-    def test_returns_error_on_general_exception(self, mock_api_response, api_call):
+    def test_raises_error_on_general_exception(self, mock_api_response, api_call):
         mock_api_response.side_effect = Exception("something broke")
 
-        result = api_call.one_phase_call()
-
-        assert "error" in result
-        assert "Provider failed" in result["error"]
+        with pytest.raises(RuntimeError, match="Provider failed"):
+            api_call.one_phase_call()
 
     @patch(f"{_MOD_PATH}.api_response")
-    def test_returns_error_on_503(self, mock_api_response, api_call):
+    def test_raises_error_on_503(self, mock_api_response, api_call):
         mock_api_response.side_effect = Exception("503 service down")
 
-        result = api_call.one_phase_call()
-
-        assert "error" in result
-        assert "503" in result["error"]
+        with pytest.raises(RuntimeError, match="503"):
+            api_call.one_phase_call()
 
 
 # two_phase_zeroshot_call
 
 class TestTwoPhaseZeroshotCall:
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_returns_output_and_combined_token_usage(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         phase1_usage = {"prompt": 80, "completion": 40, "total": 120}
         phase2_usage = {"prompt": 200, "completion": 60, "total": 260}
@@ -166,7 +145,6 @@ class TestTwoPhaseZeroshotCall:
             {"output": "intermediate free-form text", "token_usage": phase1_usage},
             {"output": domain_story, "token_usage": phase2_usage},
         ]
-        mock_search_icons.return_value = domain_story_with_icon
 
         result = api_call.two_phase_zeroshot_call()
 
@@ -175,64 +153,56 @@ class TestTwoPhaseZeroshotCall:
         assert result["token_usage"]["completion"] == 100
         assert result["token_usage"]["total"] == 380
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_api_response_called_twice(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         mock_api_response.side_effect = [
             {"output": "intermediate text", "token_usage": MOCK_TOKEN_USAGE},
             {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE},
         ]
-        mock_search_icons.return_value = domain_story_with_icon
 
         api_call.two_phase_zeroshot_call()
 
         assert mock_api_response.call_count == 2
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_phase1_called_without_schema(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         mock_api_response.side_effect = [
             {"output": "intermediate text", "token_usage": MOCK_TOKEN_USAGE},
             {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE},
         ]
-        mock_search_icons.return_value = domain_story_with_icon
 
         api_call.two_phase_zeroshot_call()
 
         first_call_kwargs = mock_api_response.call_args_list[0]
         assert first_call_kwargs.kwargs["schema"] is None
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_phase2_called_with_schema(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         mock_api_response.side_effect = [
             {"output": "intermediate text", "token_usage": MOCK_TOKEN_USAGE},
             {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE},
         ]
-        mock_search_icons.return_value = domain_story_with_icon
 
         api_call.two_phase_zeroshot_call()
 
         second_call_kwargs = mock_api_response.call_args_list[1]
         assert second_call_kwargs.kwargs["schema"] is DomainStory
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_phase2_messages_contain_assistant_reply_and_prompt2(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         intermediate_text = "Actors: Customer. Work objects: contract."
         mock_api_response.side_effect = [
             {"output": intermediate_text, "token_usage": MOCK_TOKEN_USAGE},
             {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE},
         ]
-        mock_search_icons.return_value = domain_story_with_icon
 
         api_call.two_phase_zeroshot_call()
 
@@ -247,42 +217,35 @@ class TestTwoPhaseZeroshotCall:
         assert messages[2]["content"] == intermediate_text
         assert messages[3]["role"] == "user"
 
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
     def test_token_usage_fallback_when_phase1_is_none(
-        self, mock_api_response, mock_search_icons, api_call, domain_story, domain_story_with_icon
+        self, mock_api_response, api_call, domain_story
     ):
         mock_api_response.side_effect = [
             {"output": "text", "token_usage": None},
             {"output": domain_story, "token_usage": MOCK_TOKEN_USAGE},
         ]
-        mock_search_icons.return_value = domain_story_with_icon
 
         result = api_call.two_phase_zeroshot_call()
 
         assert result["token_usage"] == MOCK_TOKEN_USAGE
 
     @patch(f"{_MOD_PATH}.api_response")
-    def test_returns_error_on_general_exception(self, mock_api_response, api_call):
+    def test_raises_error_on_general_exception(self, mock_api_response, api_call):
         mock_api_response.side_effect = Exception("connection lost")
 
-        result = api_call.two_phase_zeroshot_call()
+        with pytest.raises(RuntimeError, match="Provider failed"):
+            api_call.two_phase_zeroshot_call()
 
-        assert "error" in result
-        assert "Provider failed" in result["error"]
-
-    @patch(f"{_MOD_PATH}.search_icons")
     @patch(f"{_MOD_PATH}.api_response")
-    def test_returns_error_when_phase2_fails(
-        self, mock_api_response, mock_search_icons, api_call
+    def test_raises_error_when_phase2_fails(
+        self, mock_api_response, api_call
     ):
         mock_api_response.side_effect = [
             {"output": "intermediate text", "token_usage": MOCK_TOKEN_USAGE},
             Exception("phase 2 broke"),
         ]
 
-        result = api_call.two_phase_zeroshot_call()
-
-        assert "error" in result
-        assert "Provider failed" in result["error"]
+        with pytest.raises(RuntimeError, match="Provider failed"):
+            api_call.two_phase_zeroshot_call()
 

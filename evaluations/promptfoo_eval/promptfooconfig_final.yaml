@@ -1,0 +1,132 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: final model comparison
+
+prompts:
+  - "{{prompt}}"
+
+evaluateOptions:
+  # Conservative defaults for multi-provider evals.
+  maxConcurrency: 1
+  delay: 5000
+
+providers:
+  - id: file://provider_requests.py:one_phase_zeroshot_grok
+    config:
+      model: xai/grok-4.3
+      provider: xai
+      label: grok
+  - id: file://provider_requests.py:two_phase_zeroshot_grok
+    config:
+      model: xai/grok-4.3
+      provider: xai
+      label: grok
+
+  - id: file://provider_requests.py:one_phase_zeroshot_gemini
+    config:
+      model: gemini-3.5-flash
+      provider: gemini
+      label: gemini
+  - id: file://provider_requests.py:two_phase_zeroshot_gemini
+    config:
+      model: gemini-3.5-flash
+      provider: gemini
+      label: gemini
+
+  - id: file://provider_requests.py:one_phase_zeroshot_claude
+    config:
+      model: deepseek-v4-pro
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: DeepSeek v4 Pro
+  - id: file://provider_requests.py:two_phase_zeroshot_claude
+    config:
+      model: deepseek-v4-pro
+      provider: qwen-compatible
+      base: QWEN_API_BASE
+      label: DeepSeek v4 Pro
+
+  - id: file://provider_requests.py:one_phase_zeroshot_gpt
+    config:
+      model: gpt-5.4
+      provider: openai
+      label: Gpt-5.4
+  - id: file://provider_requests.py:two_phase_zeroshot_gpt
+    config:
+      model: gpt-5.4
+      provider: openai
+      label: Gpt-5.4
+
+tests:
+  - vars:
+      input:
+        file://alphorn_text//alphorn-1.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-1.json
+
+    assert: &grading_assert
+      - type: python
+        value: file://../scoring/grading.py:grading
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-2.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-2.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-3.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-3.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-4.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-4.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-5.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-5.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-6.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-6.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-7.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-7.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-8.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-8.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-9.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-9.json
+    assert: *grading_assert
+
+  - vars:
+      input:
+        file://alphorn_text//alphorn-10.txt
+      expected_output:
+        file://alphorn-gold-standard//gold-alphorn-10.json
+    assert: *grading_assert
+
