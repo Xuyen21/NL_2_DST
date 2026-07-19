@@ -8,7 +8,61 @@ from text_to_json.schema_design import DomainStory
 
 T = TypeVar("T", bound=BaseModel)
 
-DEFAULT_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "300"))
+DEFAULT_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "600"))
+DETERMINISTIC_SYSTEM_SAMPLING_GUIDANCE = (
+    "Be deterministic and consistent. Prefer the most literal, text-grounded "
+    "interpretation. Avoid creative variation, randomness, and alternative phrasings "
+    "unless the input explicitly requires them."
+)
+
+
+def _normalize_model_name(model_name: str) -> str:
+    return model_name.strip().lower()
+
+
+def _supports_temperature(model_name: str, custom_llm_provider: str | None) -> bool:
+    normalized_model = _normalize_model_name(model_name)
+
+    unsupported_temperature_prefixes = (
+        "gemini-3",
+        "gemini/gemini-3",
+        "gpt-",
+        "openai/gpt-",
+    )
+    return not normalized_model.startswith(unsupported_temperature_prefixes)
+
+
+def _should_add_system_sampling_guidance(model_name: str, custom_llm_provider: str | None) -> bool:
+    return not _supports_temperature(model_name, custom_llm_provider)
+
+
+def _with_system_sampling_guidance(messages: list[object]) -> list[object]:
+    updated_messages: list[object] = []
+    appended_guidance = False
+
+    for message in messages:
+        if (
+            not appended_guidance
+            and isinstance(message, dict)
+            and message.get("role") == "system"
+            and isinstance(message.get("content"), str)
+        ):
+            updated_message = dict(message)
+            content = updated_message["content"].rstrip()
+            updated_message["content"] = f"{content}\n\n{DETERMINISTIC_SYSTEM_SAMPLING_GUIDANCE}"
+            updated_messages.append(updated_message)
+            appended_guidance = True
+            continue
+
+        updated_messages.append(message)
+
+    if not appended_guidance:
+        return [
+            {"role": "system", "content": DETERMINISTIC_SYSTEM_SAMPLING_GUIDANCE},
+            *updated_messages,
+        ]
+
+    return updated_messages
 
 
 def _format_exception_details(exc: Exception) -> str:
@@ -49,15 +103,26 @@ def api_response(
     timeout_seconds: Optional[float] = None,
 ):
     resolved_timeout_seconds = timeout_seconds or DEFAULT_TIMEOUT_SECONDS
+    should_add_system_sampling_guidance = _should_add_system_sampling_guidance(
+        model_name, custom_llm_provider
+    )
+    temperature_supported = _supports_temperature(model_name, custom_llm_provider)
+    resolved_messages = (
+        _with_system_sampling_guidance(messages)
+        if should_add_system_sampling_guidance
+        else messages
+    )
 
     kwargs = {
         "model": model_name,
-        "messages": messages,
+        "messages": resolved_messages,
         "timeout": resolved_timeout_seconds,
         "num_retries": 0,
-        # "temperature": 0,
-        # "seed": 42,
+        "seed": 42,
     }
+
+    if temperature_supported:
+        kwargs["temperature"] = 0
 
     if schema is not None:
         kwargs["response_format"] = schema

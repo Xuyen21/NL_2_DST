@@ -11,8 +11,3 @@ uv==0.11.21
 litellm==1.89.0
 spacy
 pytest
-
-
-# erdantic is optional and not required for the main app.
-# On Windows it pulls in pygraphviz, which needs native Graphviz tooling to build.
-# Keep it out of the default install unless you specifically need schema diagram generation.

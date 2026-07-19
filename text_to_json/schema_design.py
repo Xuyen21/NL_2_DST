@@ -157,7 +157,6 @@ class SubActivity(BaseModel):
     target_id: str = Field(
         description=(
             "The ID of the secondary actor or another work object instance that receives this continuation. "
-            # "For example, if the chain is 'car' -> 'with' -> 'monthly_installment', this field is 'monthly_installment'."
         )
     )
 
@@ -178,88 +177,3 @@ class DomainStory(BaseModel):
     actors: List[Actor]
     work_objects: List[WorkObject]
     activities: List[Activity] = Field(default_factory=list)
-
-
-class DomainStory_Fewshot_CoT(BaseModel):
-    user_input: Optional[str] = Field(
-        None,
-        description="Leave this field blank/null. It is only for reference in examples.",
-    )
-    steps: List[Activity] = Field(default_factory=list)
-    title: str = Field(
-        description="A short title summarizing the story, prioritize if user explicitly provides it."
-    )
-    actors: List[Actor]
-    work_objects: List[WorkObject]
-    work_object_instances: List[WorkObjectInstance] = Field(default_factory=list)
-    activities: List[Activity] = Field(default_factory=list)
-
-    # provide examples:
-    model_config = ConfigDict(
-        json_schema_extra={
-            "examples": [
-                # ----------------- example 1 -------------
-                {
-                    "reasoning": "The text outlines a vehicle damage reporting workflow. The 'Customer' is a Person actor, and the 'Leasing company' (referred to as 'the company' in later steps) is an organization/System actor. The objects being handled are the 'damage', 'leased vehicle', 'damage report', 'contract conditions', and 'repair order'. Step 4 contains a conditional constraint noted at the end of the text.",
-                    "user_input": "1.The customer reports damage to the leased vehicle.\n2.The leasing company registers the damage report.\n3. The company checks the contract conditions.\n4. The company creates a repair order.\nNote: when the damage is covered",
-                    "title": "Leased Vehicle Damage Reporting Process",
-                    "actors": [
-                        {"id": "actor_1", "name": "Customer", "type": "Person"},
-                        {"id": "actor_2", "name": "Leasing company", "type": "System"},
-                    ],
-                    "work_objects": [
-                        {"id": "wo_1", "name": "damage"},
-                        {"id": "wo_2", "name": "leased vehicle"},
-                        {"id": "wo_3", "name": "damage report"},
-                        {"id": "wo_4", "name": "contract conditions"},
-                        {"id": "wo_5", "name": "repair order"},
-                    ],
-                    "work_object_instances": [
-                        {"id": "woi_1", "work_object_id": "wo_1", "state": "reported"},
-                        {"id": "woi_2", "work_object_id": "wo_2", "state": "damaged"},
-                        {
-                            "id": "woi_3",
-                            "work_object_id": "wo_3",
-                            "state": "registered",
-                        },
-                        {"id": "woi_4", "work_object_id": "wo_4", "state": "checked"},
-                        {"id": "woi_5", "work_object_id": "wo_5", "state": "created"},
-                    ],
-                    "steps": [
-                        {
-                            "step_number": 1,
-                            "actor_id": "actor_1",
-                            "activity": "reports",
-                            "work_object_instance_ids": ["woi_1", "woi_2"],
-                            "target_id": "actor_2",
-                        },
-                        {
-                            "step_number": 2,
-                            "actor_id": "actor_2",
-                            "activity": "registers",
-                            "work_object_instance_ids": ["woi_3"],
-                        },
-                        {
-                            "step_number": 3,
-                            "actor_id": "actor_2",
-                            "activity": "checks",
-                            "work_object_instance_ids": ["woi_4"],
-                        },
-                        {
-                            "step_number": 4,
-                            "actor_id": "actor_2",
-                            "activity": "creates",
-                            "work_object_instance_ids": ["woi_5"],
-                            "note": "When the damage is covered",
-                        },
-                    ],
-                }
-            ]
-        },
-        # ----------------- example 2 -------------
-    )
-
-
-class DomainTest(BaseModel):
-    actors: List[Actor]
-    work_objects: List[WorkObject]
