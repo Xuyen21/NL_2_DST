@@ -6,7 +6,7 @@ prompts:
 
 evaluateOptions:
   # Conservative defaults for multi-provider evals.
-  maxConcurrency: 1
+  maxConcurrency: 4
   delay: 5000
 
 providers:
