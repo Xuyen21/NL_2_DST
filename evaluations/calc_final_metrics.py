@@ -6,7 +6,7 @@ from utils.promptfoo_result_utils import extract_prompting_mode, load_provider_m
 from evaluations.verification import load_json
 
 
-REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-final-0_2-run3.json"
+REPORT_PATH = Path(__file__).resolve().parent / "results-zero-shot-final.json"
 PROMPTFOO_CONFIG_PATH = Path(__file__).resolve().parent / "promptfoo_eval" / "promptfooconfig_final.yaml"
 
 def format_provider_name(label: str) -> str:

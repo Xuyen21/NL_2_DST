@@ -12,7 +12,7 @@ from utils.api_request import api_response
 load_dotenv()
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gpt-5.4"  # 'gemini/gemini-2.5-flash'
+DEFAULT_MODEL = "gpt-5.5"  # 'gemini/gemini-2.5-flash'
 
 
 def pipeline(content: str, model: str = DEFAULT_MODEL) -> str:
